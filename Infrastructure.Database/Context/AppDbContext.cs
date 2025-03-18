@@ -9,7 +9,7 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options) {}
 
-    DbSet<ZipCode> ZipCodes { get; set; }
+    DbSet<Address> ZipCodes { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace Infrastructure.EntityConfiguration;
 
-public class ZipCodeConfiguration : IEntityTypeConfiguration<ZipCode>
+public class ZipCodeConfiguration : IEntityTypeConfiguration<Address>
 {
-    public void Configure(EntityTypeBuilder<ZipCode> builder)
+    public void Configure(EntityTypeBuilder<Address> builder)
     {
         builder.ToTable("tb_zip_codes");
         
@@ -20,23 +20,23 @@ public class ZipCodeConfiguration : IEntityTypeConfiguration<ZipCode>
         builder.Property(z => z.Id)
             .HasColumnName("id_zip_code");
 
-        builder.Property(z => z.Code)
+        builder.Property(z => z.ZipCode)
             .HasColumnName("zip_code")
             .IsRequired();
         
-        builder.Property(z => z.Code)
+        builder.Property(z => z.ZipCode)
             .HasColumnName("street")
             .IsRequired();
         
-        builder.Property(z => z.Code)
+        builder.Property(z => z.ZipCode)
             .HasColumnName("area")
             .IsRequired();
         
-        builder.Property(z => z.Code)
+        builder.Property(z => z.ZipCode)
             .HasColumnName("city")
             .IsRequired();
         
-        builder.Property(z => z.Code)
+        builder.Property(z => z.ZipCode)
             .HasColumnName("state")
             .IsRequired();
     }
