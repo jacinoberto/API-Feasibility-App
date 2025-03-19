@@ -29,7 +29,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .HasMaxLength(8)
             .IsRequired(false);
         
-        builder.Property(a => a.ZipCode)
+        builder.Property(a => a.Street)
             .HasColumnName("street")
             .HasMaxLength(100)
             .IsRequired(false);
@@ -38,18 +38,13 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .HasColumnName("number")
             .IsRequired(false);
             
-        builder.Property(a => a.ZipCode)
+        builder.Property(a => a.Area)
             .HasColumnName("area")
             .HasMaxLength(100)
             .IsRequired(false);
         
-        builder.Property(a => a.ZipCode)
+        builder.Property(a => a.City)
             .HasColumnName("city")
-            .HasMaxLength(50)
-            .IsRequired(false);
-        
-        builder.Property(a => a.ZipCode)
-            .HasColumnName("state")
             .HasMaxLength(50)
             .IsRequired(false);
         

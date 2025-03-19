@@ -9,12 +9,15 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
 {
     public void Configure(EntityTypeBuilder<Company> builder)
     {
-        builder.ToTable("tb_companies")
-            .HasKey(c => c.Id);
+        builder.ToTable("tb_companies");
+        
+        builder.HasKey(x => x.Id);
         
         builder.Property(c => c.Id)
             .HasValueGenerator<GuidValueGenerator>()
-            .ValueGeneratedOnAdd()
+            .ValueGeneratedOnAdd();
+        
+        builder.Property(c=> c.Id)
             .HasColumnName("id_company");
         
         builder.Property(c => c.CompanyName)
@@ -58,7 +61,7 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
         
         builder.Property(c => c.IsActive)
             .HasColumnName("is_active")
-            .HasColumnType("boolean")
+            .HasColumnType("tinyint(1)")
             .HasDefaultValue(true)
             .IsRequired();
     }

@@ -15,7 +15,7 @@ public class Address
     public State? State { get; set; }
     
     /*Relationships*/
-    public IEnumerable<Address> Addresses { get; set; }
+    public IEnumerable<PlanFeasibility> PlanFeasibility { get; set; }
     private Address() { }
     
     public Address(Guid? stateId, string? zipCode, string? street, int? number, string? area, string? city)

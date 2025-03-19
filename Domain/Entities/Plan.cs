@@ -12,6 +12,7 @@ public class Plan
     
     /*__Relationships__*/
     public Internet Internet { get; set; }
+    public IEnumerable<OperatorPlan> OperatorPlans { get; set; }
     
     private Plan(){}
 
