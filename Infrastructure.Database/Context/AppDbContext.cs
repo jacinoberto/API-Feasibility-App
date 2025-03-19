@@ -9,16 +9,16 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options) {}
 
-    DbSet<Address> Addresses { get; set; }
-    DbSet<ApiKey> ApiKeys { get; set; }
-    DbSet<Company> Companies { get; set; }
-    DbSet<CompanyOperator> CompanyOperators { get; set; }
-    DbSet<Internet> Internets { get; set; }
-    DbSet<Operator> Operators { get; set; }
-    DbSet<OperatorPlan> OperatorPlans { get; set; }
-    DbSet<Plan> Plans { get; set; }
-    DbSet<PlanFeasibility> PlanFeasibilities { get; set; }
-    DbSet<State> States { get; set; }
+    public DbSet<Address> Addresses { get; set; }
+    public DbSet<ApiKey> ApiKeys { get; set; }
+    public DbSet<Company> Companies { get; set; }
+    public DbSet<CompanyOperator> CompanyOperators { get; set; }
+    public DbSet<Internet> Internets { get; set; }
+    public DbSet<Operator> Operators { get; set; }
+    public DbSet<OperatorPlan> OperatorPlans { get; set; }
+    public DbSet<Plan> Plans { get; set; }
+    public DbSet<PlanFeasibility> PlanFeasibilities { get; set; }
+    public DbSet<State> States { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

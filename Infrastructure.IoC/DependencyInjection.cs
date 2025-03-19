@@ -1,4 +1,6 @@
-﻿using Infrastructure.Context;
+﻿using Domain.Interfaces;
+using Infrastructure.Context;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,18 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseMySQL(configuration.GetConnectionString("FeasibilityConnection") ?? string.Empty,
                 b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
+
+        var muHandlers = AppDomain.CurrentDomain.Load("Application");
+        services.AddMediatR(config => config.RegisterServicesFromAssemblies(muHandlers));
+        
+        /*__Registering Services__*/
+        services.AddScoped<IStateRepository, StateRepositoryImpl>();
+        services.AddScoped<IAddressRepository, AddressRepositoryImpl>();
+        services.AddScoped<ICompanyRepository, CompanyRepositoryImpl>();
+        services.AddScoped<IInternetRepository, InternetRepositoryImpl>();
+        services.AddScoped<IOperatorRepository, OperatorRepositoryImpl>();
+        
+        /*__Registering Services__*/
         
         return services;
     }

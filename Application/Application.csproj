@@ -11,4 +11,15 @@
       <ProjectReference Include="..\Infrastructure.Database\Infrastructure.Database.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MediatR" Version="12.4.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="CQRS\" />
+      <Folder Include="Interfaces\" />
+      <Folder Include="Mappings\" />
+      <Folder Include="Services\" />
+    </ItemGroup>
+
 </Project>
