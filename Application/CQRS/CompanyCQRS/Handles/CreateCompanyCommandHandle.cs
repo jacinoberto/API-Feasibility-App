@@ -11,7 +11,7 @@ public class CreateCompanyCommandHandle(ICompanyRepository repository) : IReques
     
     public async Task<Company> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
     {
-        return await _repository.CreateAsync(new Company(request.CompanyName, request.CompanyCode, request.ResponsibleContact,
-            request.FinancialContact, request.ResponsibleEmail, request.FinancialEmail));
+        return await _repository.CreateAsync(new Company(request.CompanyName, request.CompanyCode, request.ResponsibleEmail,
+            request.FinancialEmail, request.ResponsibleContact, request.FinancialContact));
     }
 }

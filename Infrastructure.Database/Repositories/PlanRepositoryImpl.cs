@@ -18,7 +18,9 @@ public class PlanRepositoryImpl(AppDbContext context) : IPlanRepository
 
     public async Task<Plan> GetByIdAsync(Guid id)
     {
-        return await _context.Plans.FindAsync(id)
+        return await _context.Plans
+                   .Include(plan => plan.Internet)
+                   .SingleOrDefaultAsync(plan => plan.Id == id)
             ?? throw new NotFoundException("Não foi entrado nenhum plano com o ID informado.");
     }
 
@@ -26,6 +28,7 @@ public class PlanRepositoryImpl(AppDbContext context) : IPlanRepository
     {
         return await _context.Plans
                    .Where(plan => plan.IsActive == true)
+                   .Include(plan => plan.Internet)
                    .ToListAsync()
                ?? throw new NotFoundException("Não há planos cadastrados no sistema ou todos foram desativados.");
     }

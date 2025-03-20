@@ -27,6 +27,9 @@ public static class DependencyInjection
         services.AddScoped<IInternetRepository, InternetRepositoryImpl>();
         services.AddScoped<IOperatorRepository, OperatorRepositoryImpl>();
         services.AddScoped<IPlanRepository, PlanRepositoryImpl>();
+        services.AddScoped<ICompanyOperatorRepository, CompanyOperatorRepositoryImpl>();
+        services.AddScoped<IOperatorPlanRepository, OperatorPlanRepositoryImpl>();
+        services.AddScoped<IPlanFeasibilityRepository, PlanFeasibilityRepositoryImpl>();
         
         /*__Registering Services__*/
         services.AddScoped<IStateService, StateServiceImpl>();
