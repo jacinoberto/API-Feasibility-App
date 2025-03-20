@@ -1,4 +1,6 @@
-﻿using Domain.Interfaces;
+﻿using Application.Interfaces;
+using Application.Services;
+using Domain.Interfaces;
 using Infrastructure.Context;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -24,8 +26,15 @@ public static class DependencyInjection
         services.AddScoped<ICompanyRepository, CompanyRepositoryImpl>();
         services.AddScoped<IInternetRepository, InternetRepositoryImpl>();
         services.AddScoped<IOperatorRepository, OperatorRepositoryImpl>();
+        services.AddScoped<IPlanRepository, PlanRepositoryImpl>();
         
         /*__Registering Services__*/
+        services.AddScoped<IStateService, StateServiceImpl>();
+        services.AddScoped<IAddressService, AddressServiceImpl>();
+        services.AddScoped<ICompanyService, CompanyServiceImpl>();
+        services.AddScoped<IOperatorService, OperatorServiceImpl>();
+        services.AddScoped<IInternetService, InternetServiceImpl>();
+        services.AddScoped<IPlanService, PlanServiceImpl>();
         
         return services;
     }

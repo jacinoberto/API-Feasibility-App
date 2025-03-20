@@ -4,6 +4,6 @@ namespace Domain.Interfaces;
 
 public interface IAddressRepository
 {
-    Task CreateAsync(State entity);
+    Task<Address> CreateAsync(Address entity);
     Task<Address> GetByIdAsync(Guid id);
 }

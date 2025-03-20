@@ -9,10 +9,11 @@ public class CompanyRepositoryImpl(AppDbContext context) : ICompanyRepository
 {
     private readonly AppDbContext _context = context;
     
-    public async Task CreateAsync(Company entity)
+    public async Task<Company> CreateAsync(Company entity)
     {
         await _context.Companies.AddAsync(entity);
         await _context.SaveChangesAsync();
+        return entity;
     }
 
     public async Task<Company> GetByIdAsync(Guid id)
@@ -21,12 +22,14 @@ public class CompanyRepositoryImpl(AppDbContext context) : ICompanyRepository
             ?? throw new NotFoundException("Não foi encontrada nenhuma empresa com o ID informado.");
     }
 
-    public async Task UpdateAsync(Guid id, Company entity)
+    public async Task<Company> UpdateAsync(Guid id, Company entity)
     {
         var company = await GetByIdAsync(id);
-        
         company.ChangeCompany(entity.CompanyName, entity.ResponsibleContact, entity.FinancialContact, entity.ResponsibleEmail,
             entity.FinancialEmail);
+        
+        await _context.SaveChangesAsync();
+        return company;
     }
 
     public async Task DeleteAsync(Guid id)
