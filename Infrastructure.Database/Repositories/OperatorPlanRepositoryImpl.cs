@@ -21,6 +21,7 @@ public class OperatorPlanRepositoryImpl(AppDbContext context) : IOperatorPlanRep
         var list = await _context.OperatorPlans
                    .Include(op => op.Plan)
                      .Include(op => op.Operator)
+                     .Include(op => op.Plan.Internet)
                    .Where(op => op.OperatorId == operatorId)
                    .ToListAsync();
         

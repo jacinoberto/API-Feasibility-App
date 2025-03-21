@@ -16,12 +16,13 @@ public class CompanyOperatorRepositoryImpl(AppDbContext context) : ICompanyOpera
         await _context.SaveChangesAsync();
     }
 
-    public async Task<CompanyOperator> GetByCompanyIdAsync(Guid companyId)
+    public async Task<IEnumerable<CompanyOperator>> GetByCompanyIdAsync(Guid companyId)
     {
         return await _context.CompanyOperators
                    .Include(c => c.Operator)
                    .Include(c => c.Company)
-                   .FirstOrDefaultAsync(c => c.CompanyId == companyId)
+                   .Where(c => c.CompanyId == companyId)
+                   .ToListAsync()
                ?? throw new NotFoundException("Não foi encontrada nenhuma operadora vinculada a essa empresa.");
     }
 }

@@ -5,13 +5,12 @@ using MediatR;
 
 namespace Application.CQRS.OperatorCQRS.Handles;
 
-public class CreateOperatorCommandHandle(IOperatorRepository repository) : IRequestHandler<CreateOperatorCommand, bool>
+public class CreateOperatorCommandHandle(IOperatorRepository repository) : IRequestHandler<CreateOperatorCommand, Operator>
 {
     private readonly IOperatorRepository _repository = repository;
     
-    public async Task<bool> Handle(CreateOperatorCommand request, CancellationToken cancellationToken)
+    public async Task<Operator> Handle(CreateOperatorCommand request, CancellationToken cancellationToken)
     {
-        await _repository.CreateAsync(new Operator(request.OperatorName));
-        return true;
+        return await _repository.CreateAsync(new Operator(request.OperatorName));
     }
 }

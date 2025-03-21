@@ -38,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<IOperatorService, OperatorServiceImpl>();
         services.AddScoped<IInternetService, InternetServiceImpl>();
         services.AddScoped<IPlanService, PlanServiceImpl>();
+        services.AddScoped<IOperatorPlanService, OperatorPlanServiceImpl>();
         
         return services;
     }

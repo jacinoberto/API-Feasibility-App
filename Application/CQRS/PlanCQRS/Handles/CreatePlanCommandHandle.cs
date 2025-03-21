@@ -5,13 +5,12 @@ using MediatR;
 
 namespace Application.CQRS.PlanCQRS.Handles;
 
-public class CreatePlanCommandHandle(IPlanRepository repository) : IRequestHandler<CreatePlanCommand, bool>
+public class CreatePlanCommandHandle(IPlanRepository repository) : IRequestHandler<CreatePlanCommand, Plan>
 {
     private readonly IPlanRepository _repository = repository;
     
-    public async Task<bool> Handle(CreatePlanCommand request, CancellationToken cancellationToken)
+    public async Task<Plan> Handle(CreatePlanCommand request, CancellationToken cancellationToken)
     {
-        await _repository.CreateAsync(new Plan(request.InternetId, request.PlanName, request.Value));
-        return true;
+        return await _repository.CreateAsync(new Plan(request.InternetId, request.PlanName, request.Value));
     }
 }

@@ -10,10 +10,11 @@ public class PlanRepositoryImpl(AppDbContext context) : IPlanRepository
 {
     private readonly AppDbContext _context = context;
     
-    public async Task CreateAsync(Plan entity)
+    public async Task<Plan> CreateAsync(Plan entity)
     {
         await _context.Plans.AddAsync(entity);
         await _context.SaveChangesAsync();
+        return entity;
     }
 
     public async Task<Plan> GetByIdAsync(Guid id)

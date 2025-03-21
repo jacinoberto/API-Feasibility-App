@@ -10,16 +10,24 @@ public class OperatorRepositoryImpl(AppDbContext context) : IOperatorRepository
 {
     private readonly AppDbContext _context = context;
     
-    public async Task CreateAsync(Operator entity)
+    public async Task<Operator> CreateAsync(Operator entity)
     {
         await _context.Operators.AddAsync(entity);
         await _context.SaveChangesAsync();
+        return entity;
     }
 
     public async Task<Operator> GetByIdAsync(Guid id)
     {
         return await _context.Operators.FindAsync(id)
             ?? throw new NotFoundException("Não foi entrada nenhuma operadora com esse ID.");
+    }
+
+    public async Task<Operator?> GetByNameAsync(string operatorName)
+    {
+        return await _context.Operators
+            .FirstOrDefaultAsync(op => op.OperatorName.ToUpper()
+                .Contains(operatorName.ToUpper()));
     }
 
     public async Task<IEnumerable<Operator>> GetAllAsync()
