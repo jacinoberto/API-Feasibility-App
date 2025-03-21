@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Application.Services;
+using Application.Utils.ReadCSVs.CSVs;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Infrastructure.Repositories;
@@ -39,6 +40,8 @@ public static class DependencyInjection
         services.AddScoped<IInternetService, InternetServiceImpl>();
         services.AddScoped<IPlanService, PlanServiceImpl>();
         services.AddScoped<IOperatorPlanService, OperatorPlanServiceImpl>();
+        
+        services.AddScoped<IReadCvsUtil, ReadCsvUtil>();
         
         return services;
     }

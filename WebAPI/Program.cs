@@ -1,6 +1,7 @@
 using System.Reflection;
 using Infrastructure.IoC;
 using Microsoft.OpenApi.Models;
+using WebAPI.Util;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.Services.AddSwaggerGen(swagger =>
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     swagger.IncludeXmlComments(xmlPath);
+    swagger.OperationFilter<SwaggerFileOperationFilter>();
 });
 
 var app = builder.Build();

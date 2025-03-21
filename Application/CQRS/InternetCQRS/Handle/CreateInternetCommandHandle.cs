@@ -5,13 +5,12 @@ using MediatR;
 
 namespace Application.CQRS.InternetCQRS.Handle;
 
-public class CreateInternetCommandHandle(IInternetRepository repository) : IRequestHandler<CreateInternetCommand, bool>
+public class CreateInternetCommandHandle(IInternetRepository repository) : IRequestHandler<CreateInternetCommand, Internet>
 {
     private readonly IInternetRepository _repository = repository;
     
-    public async Task<bool> Handle(CreateInternetCommand request, CancellationToken cancellationToken)
+    public async Task<Internet> Handle(CreateInternetCommand request, CancellationToken cancellationToken)
     {
-        await _repository.CreateAsync(new Internet(request.InternetSpeed, request.SpeedType));
-        return true;
+        return await _repository.CreateAsync(new Internet(request.InternetSpeed, request.SpeedType));
     }
 }

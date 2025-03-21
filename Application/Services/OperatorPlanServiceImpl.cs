@@ -1,4 +1,6 @@
-﻿using Application.CQRS.OperatorCQRS.Commands;
+﻿using Application.CQRS.InternetCQRS.Commands;
+using Application.CQRS.InternetCQRS.Queries;
+using Application.CQRS.OperatorCQRS.Commands;
 using Application.CQRS.OperatorCQRS.Queries;
 using Application.CQRS.OperatorPlanCQRS.Commands;
 using Application.CQRS.OperatorPlanCQRS.Queries;
@@ -18,6 +20,10 @@ public class OperatorPlanServiceImpl(IMediator mediator) : IOperatorPlanService
     {
         // Busca a operadora pelo nome informado
         var operatorExist = await _mediator.Send(new ReturnOperatorByNameQuery(dto.Operator.OperatorName));
+        var internet = await _mediator.Send(new ReturnInternetByInternetSpeedQuery(dto.InternetSpeed));
+
+
+        if (internet is null) internet = await _mediator.Send(new CreateInternetCommand(dto.InternetSpeed, dto.SpeedType));
         
         /*
          * Se uma operadora for retornada ela é vinculada aos planos, caso contrário é realizado o cadastro de uma nova
@@ -25,8 +31,8 @@ public class OperatorPlanServiceImpl(IMediator mediator) : IOperatorPlanService
          */
         if (operatorExist is not null)
         {
-            var planResult = await _mediator.Send(new CreatePlanCommand(dto.Plan.InternetId, dto.Plan.PlanName,
-                dto.Plan.Value));
+            var planResult = await _mediator.Send(new CreatePlanCommand(internet.Id, dto.PlanName,
+                dto.Value));
             
             await _mediator.Send(new CreateOperatorPlanCommand(operatorExist.Id, planResult.Id));
             
@@ -34,10 +40,18 @@ public class OperatorPlanServiceImpl(IMediator mediator) : IOperatorPlanService
         else
         {
             var operatorResult = await _mediator.Send(new CreateOperatorCommand(dto.Operator.OperatorName));
-            var planResult = await _mediator.Send(new CreatePlanCommand(dto.Plan.InternetId, dto.Plan.PlanName,
-                dto.Plan.Value));
+            var planResult = await _mediator.Send(new CreatePlanCommand(internet.Id, dto.PlanName,
+                dto.Value));
             
             await _mediator.Send(new CreateOperatorPlanCommand(operatorResult.Id, planResult.Id));
+        }
+    }
+
+    public async Task CreateAllByUploadAsync(IEnumerable<CreateOperatorPlanDto> listDto)
+    {
+        foreach (var dto in listDto)
+        {
+            await CreateAsync(dto);
         }
     }
 

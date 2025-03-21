@@ -5,5 +5,6 @@ namespace Application.Interfaces;
 public interface IOperatorPlanService
 {
     Task CreateAsync(CreateOperatorPlanDto dto);
-    Task<IEnumerable<ReturnOperatorPlanDto>> GetPlansByOperatorIdAsync(Guid opertatorId);
+    Task CreateAllByUploadAsync(IEnumerable<CreateOperatorPlanDto> listDto);
+    Task<IEnumerable<ReturnOperatorPlanDto>> GetPlansByOperatorIdAsync(Guid operatorId);
 }

@@ -4,6 +4,9 @@ using Application.DTOs.PlanDTOs;
 namespace Application.DTOs.OperationPlanDTOs;
 
 public record CreateOperatorPlanDto(
-    CreatePlanDto Plan,
+    string PlanName,
+    int InternetSpeed,
+    string SpeedType,
+    decimal Value,
     CreateOperatorDto Operator
     );
