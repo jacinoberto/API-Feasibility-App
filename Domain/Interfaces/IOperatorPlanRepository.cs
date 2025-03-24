@@ -4,6 +4,6 @@ namespace Domain.Interfaces;
 
 public interface IOperatorPlanRepository
 {
-    Task CreateAsync(OperatorPlan entity);
+    Task<OperatorPlan> CreateAsync(OperatorPlan entity);
     Task<IEnumerable<OperatorPlan>> GetByOperatorIdAsync(Guid operatorId);
 }

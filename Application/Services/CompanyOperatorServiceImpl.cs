@@ -1,4 +1,5 @@
-﻿using Application.CQRS.CompanyOperatorCQRS.Queries;
+﻿using Application.CQRS.CompanyOperatorCQRS.Commands;
+using Application.CQRS.CompanyOperatorCQRS.Queries;
 using Application.DTOs.CompanyOperatorDTOs;
 using Application.Interfaces;
 using Application.Mappings;
@@ -12,7 +13,7 @@ public class CompanyOperatorServiceImpl(IMediator mediator) : ICompanyOperatorSe
     
     public async Task CreateAsync(CreateCompanyOperatorDto dto)
     {
-        await _mediator.Send(new CreateCompanyOperatorDto(dto.CompanyId, dto.OperatorId));
+        await _mediator.Send(new CreateCompanyOperatorCommand(dto.CompanyId, dto.OperatorId));
     }
 
     public async Task<IEnumerable<ReturnCompanyOperatorDto>> GetByCompanyIdAsync(Guid companyId)

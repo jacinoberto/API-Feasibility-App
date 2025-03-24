@@ -1,13 +1,16 @@
 ﻿using Application.CQRS.AddressCQRS.Commands;
-using Application.CQRS.AddressCQRS.Queries;
 using Application.CQRS.InternetCQRS.Commands;
 using Application.CQRS.InternetCQRS.Queries;
 using Application.CQRS.OperatorCQRS.Commands;
 using Application.CQRS.OperatorCQRS.Queries;
 using Application.CQRS.OperatorPlanCQRS.Commands;
 using Application.CQRS.PlanCQRS.Commands;
+using Application.CQRS.PlanFeasibilityCQRS.Commands;
+using Application.CQRS.PlanFeasibilityCQRS.Queries;
+using Application.CQRS.StateCQRS.Queries;
 using Application.DTOs;
 using Application.Interfaces;
+using Application.Mappings;
 using MediatR;
 
 namespace Application.Services;
@@ -18,46 +21,46 @@ public class PlanFeasibilityServiceImpl(IMediator mediator) : IPlanFeasibilitySe
     
     public async Task CreateAsync(CreatePlanFeasibilityDto dto)
     {
-        // Busca a operadora pelo nome informado
+        if (dto == null) throw new ArgumentNullException(nameof(dto), "Os dados do plano são obrigatórios.");
+
+        // Faz uma consulta para verificar se a operadora já existe.
         var operatorExist = await _mediator.Send(new ReturnOperatorByNameQuery(dto.Operator));
-        var internetExist = await _mediator.Send(new ReturnInternetByInternetSpeedQuery(dto.InternetSpeed));
-        var addressExist = await _mediator.Send(new ReturnAddressByParametersQuery(dto.ZipCode, dto.City, dto.State));
-
-
-        if (internetExist is null) internetExist = await _mediator.Send(new CreateInternetCommand(dto.InternetSpeed, dto.SpeedType));
-        if (addressExist is null) addressExist = await _mediator.Send(new CreateAddressCommand(new Guid(), dto.ZipCode, 
-            dto.Street, dto.Number, dto.Area, dto.City));
         
-        /*
-         * Se uma operadora for retornada ela é vinculada aos planos, caso contrário é realizado o cadastro de uma nova
-         * operadora e vinculo entre os planos.
-         */
-        if (operatorExist is not null)
-        {
-            var planResult = await _mediator.Send(new CreatePlanCommand(internetExist.Id, dto.PlanName,
-                dto.Value));
-            
-            await _mediator.Send(new CreateOperatorPlanCommand(operatorExist.Id, planResult.Id));
-            
-        }
-        else
-        {
-            var operatorResult = await _mediator.Send(new CreateOperatorCommand(dto.Operator));
-            var planResult = await _mediator.Send(new CreatePlanCommand(internetExist.Id, dto.PlanName,
-                dto.Value));
-            
-            await _mediator.Send(new CreateOperatorPlanCommand(operatorResult.Id, planResult.Id));
-        }
-        
+        // Verifica se já existe uma internet com a velocidade informada, caso não exista, cria uma nova.
+        var internetExist = await _mediator.Send(new ReturnInternetByInternetSpeedQuery(dto.InternetSpeed)) 
+                            ?? await _mediator.Send(new CreateInternetCommand(dto.InternetSpeed, dto.SpeedType));
+
+        // Se o estado for informado, verifica se o estado existe.
+        var stateExist = await _mediator.Send(new ReturnStateByUfQuery(dto.State));
+
+        // Se a operadora não existir, cria uma nova.
+        var operatorId = operatorExist?.Id ?? (await _mediator.Send(new CreateOperatorCommand(dto.Operator))).Id;
+
+        // Cria as associações entre as entidades, e cadastra a viabilidade.
+        await CrateAssociationAsync(operatorId, internetExist.Id, stateExist?.Id, dto);
     }
 
-    public Task CreateAllAsync(IEnumerable<CreatePlanFeasibilityDto> listDto)
+    public async Task CreateAllAsync(IEnumerable<CreatePlanFeasibilityDto> listDto)
     {
-        throw new NotImplementedException();
+        foreach (var dto in listDto)
+        {
+            await CreateAsync(dto);
+        }
     }
 
-    public Task<ReturnPlanFeasibilitDto> GetByParametersAsync(string? zipCode, string? city, string? state)
+    public async Task<ReturnPlanFeasibilitDto> GetByParametersAsync(string? zipCode, string? city, string? state)
     {
-        throw new NotImplementedException();
+        return PlanFeasibilityMapper.MapToReturnPlanFeasibilityDto(
+            await _mediator.Send(new ReturnPlanFeasibilityByParametersQuery(zipCode, city, state)));
+    }
+
+    private async Task CrateAssociationAsync(Guid operatorId, Guid internetId, Guid? stateId,
+        CreatePlanFeasibilityDto dto)
+    {
+        var planResult = await _mediator.Send(new CreatePlanCommand(internetId, dto.PlanName, dto.Value));
+        var op = await _mediator.Send(new CreateOperatorPlanCommand(operatorId, planResult.Id));
+        var ad = await _mediator.Send(new CreateAddressCommand(stateId, dto.ZipCode, dto.Street, dto.Number, dto.Area, dto.City));
+
+        await _mediator.Send(new CreatePlanFeasibilityCommand(op.Id, ad.Id));
     }
 }

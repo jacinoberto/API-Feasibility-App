@@ -24,10 +24,18 @@ public class PlanFeasibilityRepositoryImpl(AppDbContext context) : IPlanFeasibil
         throw new NotFoundException("Não foi entrada nenhuma viabilidade de plano para nenhum dos parâmetros informados.");
     }
 
+    public Task<PlanFeasibility> GetByCityAndStateAsync(string city, string state)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<PlanFeasibility> GetByZipCodeAsync(string zipCode)
     {
         return await _context.PlanFeasibilities
             .Include(f => f.OperatorPlan)
+            .Include(f => f.OperatorPlan.Operator)
+            .Include(f => f.OperatorPlan.Plan)
+            .Include(f => f.OperatorPlan.Plan.Internet)
             .FirstOrDefaultAsync(f => f.Address.ZipCode != null
                                       && f.Address.ZipCode.ToUpper()
                                           .Contains(zipCode.ToUpper()))
@@ -38,6 +46,9 @@ public class PlanFeasibilityRepositoryImpl(AppDbContext context) : IPlanFeasibil
     {
         return await _context.PlanFeasibilities
                    .Include(f => f.OperatorPlan)
+                   .Include(f => f.OperatorPlan.Operator)
+                   .Include(f => f.OperatorPlan.Plan)
+                   .Include(f => f.OperatorPlan.Plan.Internet)
                    .FirstOrDefaultAsync(f => f.Address.City != null 
                                              && f.Address.City.ToUpper()
                                                  .Contains(city
@@ -49,6 +60,9 @@ public class PlanFeasibilityRepositoryImpl(AppDbContext context) : IPlanFeasibil
     {
         return await _context.PlanFeasibilities
                    .Include(f => f.OperatorPlan)
+                   .Include(f => f.OperatorPlan.Operator)
+                   .Include(f => f.OperatorPlan.Plan)
+                   .Include(f => f.OperatorPlan.Plan.Internet)
                    .FirstOrDefaultAsync(f => f.Address.State != null 
                                              && f.Address.State.Uf.ToUpper()
                                                  .Contains(state.ToUpper()))

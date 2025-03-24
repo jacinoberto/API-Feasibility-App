@@ -10,10 +10,11 @@ public class OperatorPlanRepositoryImpl(AppDbContext context) : IOperatorPlanRep
 {
     private readonly AppDbContext _context = context;
     
-    public async Task CreateAsync(OperatorPlan entity)
+    public async Task<OperatorPlan> CreateAsync(OperatorPlan entity)
     {
         await _context.OperatorPlans.AddAsync(entity);
         await _context.SaveChangesAsync();
+        return entity;
     }
 
     public async Task<IEnumerable<OperatorPlan>> GetByOperatorIdAsync(Guid operatorId)

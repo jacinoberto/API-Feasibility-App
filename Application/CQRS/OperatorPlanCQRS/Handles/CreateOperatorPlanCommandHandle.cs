@@ -6,13 +6,12 @@ using MediatR;
 namespace Application.CQRS.OperatorPlanCQRS.Handles;
 
 public class CreateOperatorPlanCommandHandle(IOperatorPlanRepository repository)
-    : IRequestHandler<CreateOperatorPlanCommand, bool>
+    : IRequestHandler<CreateOperatorPlanCommand, OperatorPlan>
 {
     private readonly IOperatorPlanRepository _repository = repository;
     
-    public async Task<bool> Handle(CreateOperatorPlanCommand request, CancellationToken cancellationToken)
+    public async Task<OperatorPlan> Handle(CreateOperatorPlanCommand request, CancellationToken cancellationToken)
     {
-        await _repository.CreateAsync(new OperatorPlan(request.OperatorId, request.PlanId));
-        return true;
+        return await _repository.CreateAsync(new OperatorPlan(request.OperatorId, request.PlanId));
     }
 }

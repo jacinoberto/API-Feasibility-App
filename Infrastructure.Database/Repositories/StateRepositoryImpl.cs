@@ -21,6 +21,12 @@ public class StateRepositoryImpl: IStateRepository
                throw new NotFoundException("Não foi encontrado nenhum estado com o ID informado.");
     }
 
+    public async Task<State?> GetByUfAsync(string uf)
+    {
+        return await _context.States
+            .FirstOrDefaultAsync(s => s.Uf == uf);
+    }
+
     public async Task<IEnumerable<State>> GetAllAsync()
     {
         return await _context.States.ToListAsync();

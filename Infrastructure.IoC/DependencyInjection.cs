@@ -40,6 +40,8 @@ public static class DependencyInjection
         services.AddScoped<IInternetService, InternetServiceImpl>();
         services.AddScoped<IPlanService, PlanServiceImpl>();
         services.AddScoped<IOperatorPlanService, OperatorPlanServiceImpl>();
+        services.AddScoped<IPlanFeasibilityService, PlanFeasibilityServiceImpl>();
+        services.AddScoped<ICompanyOperatorService, CompanyOperatorServiceImpl>();
         
         services.AddScoped<IReadCvsUtil, ReadCsvUtil>();
         
