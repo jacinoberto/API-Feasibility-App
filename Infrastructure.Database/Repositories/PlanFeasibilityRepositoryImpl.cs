@@ -24,9 +24,58 @@ public class PlanFeasibilityRepositoryImpl(AppDbContext context) : IPlanFeasibil
         throw new NotFoundException("Não foi entrada nenhuma viabilidade de plano para nenhum dos parâmetros informados.");
     }
 
-    public Task<PlanFeasibility> GetByCityAndStateAsync(string city, string state)
+    public async Task<IEnumerable<PlanFeasibility>> GetByCityAndStateAsync(string city, string state, Guid companyId)
     {
-        throw new NotImplementedException();
+        var operatorsId = await _context.CompanyOperators
+            .Where(co => co.CompanyId == companyId)
+            .Select(co => co.OperatorId)
+            .ToListAsync();
+
+        return await _context.PlanFeasibilities
+            .Include(f => f.OperatorPlan)
+            .Include(f => f.OperatorPlan.Operator)
+            .Include(f => f.OperatorPlan.Plan)
+            .Include(f => f.OperatorPlan.Plan.Internet)
+            .Where(pf => operatorsId.Contains(pf.OperatorPlan.OperatorId))
+            .Where(pf => pf.Address.City.ToUpper().Contains(city.ToUpper())
+                         && pf.Address.State.Uf.ToUpper().Contains(state.ToUpper()))
+            .ToListAsync();
+    }
+
+    public async Task<PlanFeasibility> GetByZipCodeAsync(Guid companyId, string zipCode)
+    {
+        var operatorsId = await _context.CompanyOperators
+            .Where(co => co.CompanyId == companyId)
+            .Select(co => co.OperatorId)
+            .ToListAsync();
+
+        return await _context.PlanFeasibilities
+            .Include(f => f.OperatorPlan)
+            .Include(f => f.OperatorPlan.Operator)
+            .Include(f => f.OperatorPlan.Plan)
+            .Include(f => f.OperatorPlan.Plan.Internet)
+            .Where(pf => operatorsId.Contains(pf.OperatorPlan.OperatorId))
+            .Where(pf => pf.Address.ZipCode == zipCode)
+            .FirstOrDefaultAsync()
+            ?? throw new NotFoundException("Não há viabilidade para este CEP.");
+    }
+
+    public async Task<PlanFeasibility> GetByCityAsync(Guid companyId, string city)
+    {
+        var operatorsId = await _context.CompanyOperators
+            .Where(co => co.CompanyId == companyId)
+            .Select(co => co.OperatorId)
+            .ToListAsync();
+
+        return await _context.PlanFeasibilities
+                   .Include(f => f.OperatorPlan)
+                   .Include(f => f.OperatorPlan.Operator)
+                   .Include(f => f.OperatorPlan.Plan)
+                   .Include(f => f.OperatorPlan.Plan.Internet)
+                   .Where(pf => operatorsId.Contains(pf.OperatorPlan.OperatorId))
+                   .Where(pf => pf.Address.City == city)
+                   .FirstOrDefaultAsync()
+               ?? throw new NotFoundException("Não há viabilidade para esta Cidade.");
     }
 
     public async Task<PlanFeasibility> GetByZipCodeAsync(string zipCode)

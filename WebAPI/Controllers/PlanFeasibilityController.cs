@@ -1,6 +1,4 @@
 ﻿using Application.DTOs;
-using Application.DTOs.OperationPlanDTOs;
-using Application.DTOs.OperatorDTOs;
 using Application.Interfaces;
 using Application.Utils.ReadCSVs.CSVs;
 using Microsoft.AspNetCore.Mvc;
@@ -22,11 +20,49 @@ public class PlanFeasibilityController(IPlanFeasibilityService service, IReadCvs
         return StatusCode(201);
     }
 
-    [HttpGet("by-parameters")]
-    public async Task<IActionResult> GetByParametersAsync([FromQuery] string? zipCode, [FromQuery] string? city, [FromQuery] string? state)
+    /// <summary>
+    /// Consulta a viabilidade de uma empresa através da cidade e estado - UF.
+    /// </summary>
+    /// <param name="city"></param>
+    /// <param name="state"></param>
+    /// <param name="companyId"></param>
+    /// <returns></returns>
+    [HttpGet("by-city-and-state/{companyId:guid}")]
+    public async Task<IActionResult> GetByCityAndStateAsync([FromQuery] string city, [FromQuery] string state,
+        Guid companyId)
     {
-        return Ok(await _service.GetByParametersAsync(zipCode, city, state));
+        return Ok(await _service.GetByCityAndStateAsync(city, state, companyId));
     }
+    
+    /// <summary>
+    /// Consulta viabilidade de uma empresa através do CEP.
+    /// </summary>
+    /// <param name="zipCode"></param>
+    /// <param name="companyId"></param>
+    /// <returns></returns>
+    [HttpGet("by-zipcode/{companyId:guid}")]
+    public async Task<IActionResult> GetByZipCodeAsync([FromQuery] string zipCode, Guid companyId)
+    {
+        return Ok(await _service.GetByZipCodeAsync(companyId, zipCode));
+    }
+    
+    /// <summary>
+    /// Consulta a viabilidade de uma empresa através da cidade.
+    /// </summary>
+    /// <param name="city"></param>
+    /// <param name="companyId"></param>
+    /// <returns></returns>
+    [HttpGet("by-city/{companyId:guid}")]
+    public async Task<IActionResult> GetByCityAsync([FromQuery] string city, Guid companyId)
+    {
+        return Ok(await _service.GetByZipCodeAsync(companyId, city));
+    }
+
+    //[HttpGet("by-parameters")]
+    //public async Task<IActionResult> GetByParametersAsync([FromQuery] string? zipCode, [FromQuery] string? city, [FromQuery] string? state)
+    //{
+    //    return Ok(await _service.GetByParametersAsync(zipCode, city, state));
+    //}
     
     /// <summary>
     /// Realiza o Upload do arquivo CSV contendo as informaçoes sobre os planos de uma ou mais operadoras. O arquivo

@@ -11,6 +11,7 @@ using Application.CQRS.StateCQRS.Queries;
 using Application.DTOs;
 using Application.Interfaces;
 using Application.Mappings;
+using Domain.Entities;
 using MediatR;
 
 namespace Application.Services;
@@ -46,6 +47,24 @@ public class PlanFeasibilityServiceImpl(IMediator mediator) : IPlanFeasibilitySe
         {
             await CreateAsync(dto);
         }
+    }
+
+    public async Task<ReturnPlanFeasibilitDto> GetByZipCodeAsync(Guid companyId, string zipCode)
+    {
+        return PlanFeasibilityMapper.MapToReturnPlanFeasibilityDto(
+            await _mediator.Send(new ReturnPlanFeasibilityByZipCodeQuery(companyId, zipCode)));
+    }
+
+    public async Task<ReturnPlanFeasibilitDto> GetByCityAsync(Guid companyId, string city)
+    {
+        return PlanFeasibilityMapper.MapToReturnPlanFeasibilityDto(
+            await _mediator.Send(new ReturnPlanFeasibilityByCityQuery(companyId, city)));
+    }
+
+    public async Task<IEnumerable<ReturnPlanFeasibilitDto>> GetByCityAndStateAsync(string city, string state, Guid companyId)
+    {
+        var list = await _mediator.Send(new ReturnPlanFeasibilityByCityAndStateQuery(city, state, companyId));
+        return list.Select(pf => PlanFeasibilityMapper.MapToReturnPlanFeasibilityDto(pf)).ToList();
     }
 
     public async Task<ReturnPlanFeasibilitDto> GetByParametersAsync(string? zipCode, string? city, string? state)
