@@ -64,6 +64,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseMiddleware<GlobalErrorHandlingMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.UseMiddleware<ApiKeyMiddleware>();

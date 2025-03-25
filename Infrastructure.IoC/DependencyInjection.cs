@@ -3,6 +3,8 @@ using Application.Services;
 using Application.Utils.Formatting;
 using Application.Utils.Formatting.Impl;
 using Application.Utils.ReadCSVs.CSVs;
+using Application.Utils.ValidationErrors;
+using Application.Utils.ValidationErrors.Impl;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Infrastructure.EntityConfiguration;
@@ -52,6 +54,9 @@ public static class DependencyInjection
         
         services.AddScoped<IReadCvsUtil, ReadCsvUtil>();
         services.AddScoped<ITextFormattingUtil, TextFormattingUtil>();
+
+        services.AddSingleton<IValidationErrorStrategy, ValidateDataInvalidError>();
+        services.AddSingleton<IValidationErrorStrategy, ValidateNotFoundError>();
         
         return services;
     }
