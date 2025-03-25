@@ -44,4 +44,13 @@ public class ApiKeyServiceImpl(IMediator mediator, IConfiguration configuration)
     {
         return await _mediator.Send(new IsValidApiKeyQuery(key));
     }
+
+    public async Task<Guid> GetCompanyIdFromApiKeyAsync(string key)
+    {
+        var apiKey = await _mediator.Send(new ReturnApiKeyByKeyQuery(key));
+
+        if (apiKey == null) throw new UnauthorizedAccessException("Token invalido.");
+
+        return apiKey.CompanyId;
+    }
 }

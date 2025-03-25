@@ -28,9 +28,14 @@ public class CompanyOperatorController(ICompanyOperatorService service) : Contro
     /// </summary>
     /// <param name="companyId"></param>
     /// <returns></returns>
-    [HttpGet("by-company-id/{companyId:guid}")]
-    public async Task<IActionResult> GetByCompanyIdAsync(Guid companyId)
+    [HttpGet("by-company-id")]
+    public async Task<IActionResult> GetByCompanyIdAsync()
     {
-        return Ok(await _service.GetByCompanyIdAsync(companyId));
+        if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))
+        {
+            var companyId = (Guid)companyGuid;
+            return Ok(await _service.GetByCompanyIdAsync(companyId));
+        }
+        return Unauthorized("Token invalido.");
     }
 }

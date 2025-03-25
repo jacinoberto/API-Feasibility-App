@@ -28,10 +28,13 @@ public class ApiKeyMiddleware(RequestDelegate next, IServiceProvider serviceProv
             if (!context.Request.Headers.TryGetValue("Authorization", out var apiKey))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                await context.Response.WriteAsync("API key é obrigatória.");
+                await context.Response.WriteAsync("O token não foi fornecido.");
                 return;
             }
-
+    
+            var companyId = await apiKeyService.GetCompanyIdFromApiKeyAsync(apiKey);
+            context.Items["CompanyId"] = companyId;
+            
             var isValid = await apiKeyService.ValidateApiKeyAsync(apiKey);
             if (!isValid)
             {
