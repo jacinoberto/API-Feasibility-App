@@ -21,19 +21,19 @@ public class PlanFeasibilityController(IPlanFeasibilityService service, IReadCvs
     }
 
     /// <summary>
-    /// Consulta a viabilidade de uma empresa através da cidade e estado - UF.
+    /// Consulta a viabilidade de uma empresa por operadora informando cidade e estado - UF.
     /// </summary>
     /// <param name="city"></param>
     /// <param name="state"></param>
     /// <param name="companyId"></param>
     /// <returns></returns>
-    [HttpGet("by-city-and-state")]
-    public async Task<IActionResult> GetByCityAndStateAsync([FromQuery] string city, [FromQuery] string state)
+    [HttpGet("by-city-and-state/{operatorId:guid}")]
+    public async Task<IActionResult> GetByCityAndStateAsync([FromQuery] string city, [FromQuery] string state, Guid operatorId)
     {
         if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))
         {
             var companyId = (Guid)companyGuid;
-            return Ok(await _service.GetByCityAndStateAsync(city, state, companyId));
+            return Ok(await _service.GetByCityAndStateAsync(city, state, companyId, operatorId));
         }
         return Unauthorized("Token invalido.");
     }
@@ -44,13 +44,13 @@ public class PlanFeasibilityController(IPlanFeasibilityService service, IReadCvs
     /// <param name="zipCode"></param>
     /// <param name="companyId"></param>
     /// <returns></returns>
-    [HttpGet("by-zipcode")]
-    public async Task<IActionResult> GetByZipCodeAsync([FromQuery] string zipCode)
+    [HttpGet("by-zipcode/{operatorId:guid}")]
+    public async Task<IActionResult> GetByZipCodeAsync([FromQuery] string zipCode, Guid operatorId)
     {
         if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))
         {
             var companyId = (Guid)companyGuid;
-            return Ok(await _service.GetByZipCodeAsync(companyId, zipCode));
+            return Ok(await _service.GetByZipCodeAsync(companyId, operatorId, zipCode));
         }
 
         return Unauthorized("Token invalido.");
@@ -62,13 +62,13 @@ public class PlanFeasibilityController(IPlanFeasibilityService service, IReadCvs
     /// <param name="city"></param>
     /// <param name="companyId"></param>
     /// <returns></returns>
-    [HttpGet("by-city")]
-    public async Task<IActionResult> GetByCityAsync([FromQuery] string city)
+    [HttpGet("by-city/{operatorId:guid}")]
+    public async Task<IActionResult> GetByCityAsync([FromQuery] string city, Guid operatorId)
     {
         if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))
         {
             var companyId = (Guid)companyGuid;
-            return Ok(await _service.GetByZipCodeAsync(companyId, city));
+            return Ok(await _service.GetByZipCodeAsync(companyId, operatorId, city));
         }
         return Unauthorized("Token invalido.");
     }

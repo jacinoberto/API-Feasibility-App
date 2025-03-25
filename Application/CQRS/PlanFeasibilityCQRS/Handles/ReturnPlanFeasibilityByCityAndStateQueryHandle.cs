@@ -12,6 +12,6 @@ public class ReturnPlanFeasibilityByCityAndStateQueryHandle(IPlanFeasibilityRepo
     
     public async Task<IEnumerable<PlanFeasibility>> Handle(ReturnPlanFeasibilityByCityAndStateQuery request, CancellationToken cancellationToken)
     {
-        return await _repository.GetByCityAndStateAsync(request.City, request.State, request.CompanyId);
+        return await _repository.GetByCityAndStateAsync(request.City, request.State, request.CompanyId, request.OperatorId);
     }
 }

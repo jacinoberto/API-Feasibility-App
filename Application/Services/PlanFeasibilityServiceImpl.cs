@@ -11,14 +11,16 @@ using Application.CQRS.StateCQRS.Queries;
 using Application.DTOs;
 using Application.Interfaces;
 using Application.Mappings;
+using Application.Utils.Formatting;
 using Domain.Entities;
 using MediatR;
 
 namespace Application.Services;
 
-public class PlanFeasibilityServiceImpl(IMediator mediator) : IPlanFeasibilityService
+public class PlanFeasibilityServiceImpl(IMediator mediator, ITextFormattingUtil formatting) : IPlanFeasibilityService
 {
     private readonly IMediator _mediator = mediator;
+    private readonly ITextFormattingUtil _formatting = formatting;
     
     public async Task CreateAsync(CreatePlanFeasibilityDto dto)
     {
@@ -49,36 +51,38 @@ public class PlanFeasibilityServiceImpl(IMediator mediator) : IPlanFeasibilitySe
         }
     }
 
-    public async Task<ReturnPlanFeasibilitDto> GetByZipCodeAsync(Guid companyId, string zipCode)
+    public async Task<ReturnPlanFeasibilitDto> GetByZipCodeAsync(Guid companyId, Guid operatorId, string zipCode)
     {
         return PlanFeasibilityMapper.MapToReturnPlanFeasibilityDto(
-            await _mediator.Send(new ReturnPlanFeasibilityByZipCodeQuery(companyId, zipCode)));
+            await _mediator.Send(new ReturnPlanFeasibilityByZipCodeQuery(companyId, operatorId, zipCode)));
     }
 
-    public async Task<ReturnPlanFeasibilitDto> GetByCityAsync(Guid companyId, string city)
+    public async Task<ReturnPlanFeasibilitDto> GetByCityAsync(Guid companyId, Guid operatorId, string city)
     {
         return PlanFeasibilityMapper.MapToReturnPlanFeasibilityDto(
-            await _mediator.Send(new ReturnPlanFeasibilityByCityQuery(companyId, city)));
+            await _mediator.Send(new ReturnPlanFeasibilityByCityQuery(companyId, operatorId, city)));
     }
 
-    public async Task<IEnumerable<ReturnPlanFeasibilitDto>> GetByCityAndStateAsync(string city, string state, Guid companyId)
+    public async Task<IEnumerable<ReturnPlanFeasibilitDto>> GetByCityAndStateAsync(string city, string state, Guid companyId, Guid operatorId)
     {
-        var list = await _mediator.Send(new ReturnPlanFeasibilityByCityAndStateQuery(city, state, companyId));
+        var list = await _mediator.Send(new ReturnPlanFeasibilityByCityAndStateQuery(_formatting.Format(city), state, companyId, operatorId));
         return list.Select(pf => PlanFeasibilityMapper.MapToReturnPlanFeasibilityDto(pf)).ToList();
     }
 
     public async Task<ReturnPlanFeasibilitDto> GetByParametersAsync(string? zipCode, string? city, string? state)
     {
         return PlanFeasibilityMapper.MapToReturnPlanFeasibilityDto(
-            await _mediator.Send(new ReturnPlanFeasibilityByParametersQuery(zipCode, city, state)));
+            await _mediator.Send(new ReturnPlanFeasibilityByParametersQuery(zipCode, _formatting.Format(city), state)));
     }
 
     private async Task CrateAssociationAsync(Guid operatorId, Guid internetId, Guid? stateId,
         CreatePlanFeasibilityDto dto)
     {
-        var planResult = await _mediator.Send(new CreatePlanCommand(internetId, dto.PlanName, dto.Value));
+        var plano = dto.PlanName;
+        var planResult = await _mediator.Send(new CreatePlanCommand(internetId, _formatting.Format(dto.PlanName), dto.Value));
         var op = await _mediator.Send(new CreateOperatorPlanCommand(operatorId, planResult.Id));
-        var ad = await _mediator.Send(new CreateAddressCommand(stateId, dto.ZipCode, dto.Street, dto.Number, dto.Area, dto.City));
+        var ad = await _mediator.Send(new CreateAddressCommand(stateId, dto.ZipCode, _formatting.Format(dto.Street),
+            dto.Number, _formatting.Format(dto.Area), _formatting.Format(dto.City)));
 
         await _mediator.Send(new CreatePlanFeasibilityCommand(op.Id, ad.Id));
     }

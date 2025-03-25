@@ -3,10 +3,11 @@ using MediatR;
 
 namespace Application.CQRS.PlanFeasibilityCQRS.Queries;
 
-public class ReturnPlanFeasibilityByCityAndStateQuery(string city, string state, Guid companyId)
+public class ReturnPlanFeasibilityByCityAndStateQuery(string city, string state, Guid companyId, Guid operatorId)
     : IRequest<IEnumerable<PlanFeasibility>>
 {
     public string City { get; set; } = city;
     public string State { get; set; } = state;
     public Guid CompanyId { get; set; } = companyId;
+    public Guid OperatorId { get; set; } = operatorId;
 }

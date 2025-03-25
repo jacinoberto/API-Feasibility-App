@@ -12,6 +12,6 @@ public class ReturnPlanFeasibilityByZipCodeQueryHandler(IPlanFeasibilityReposito
     
     public async Task<PlanFeasibility> Handle(ReturnPlanFeasibilityByZipCodeQuery request, CancellationToken cancellationToken)
     {
-        return await _repository.GetByZipCodeAsync(request.CompanyId, request.ZipCode);
+        return await _repository.GetByZipCodeAsync(request.CompanyId, request.OperatorId, request.ZipCode);
     }
 }

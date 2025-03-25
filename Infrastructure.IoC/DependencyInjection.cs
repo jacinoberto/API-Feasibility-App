@@ -1,8 +1,11 @@
 ﻿using Application.Interfaces;
 using Application.Services;
+using Application.Utils.Formatting;
+using Application.Utils.Formatting.Impl;
 using Application.Utils.ReadCSVs.CSVs;
 using Domain.Interfaces;
 using Infrastructure.Context;
+using Infrastructure.EntityConfiguration;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +35,7 @@ public static class DependencyInjection
         services.AddScoped<IOperatorPlanRepository, OperatorPlanRepositoryImpl>();
         services.AddScoped<IPlanFeasibilityRepository, PlanFeasibilityRepositoryImpl>();
         services.AddScoped<IApiKeyRepository, ApiKeyRepositoryImpl>();
+        services.AddScoped<IRegionConsultationRepository, RegionConsultationRepositoryImpl>();
         
         /*__Registering Services__*/
         services.AddScoped<IStateService, StateServiceImpl>();
@@ -44,8 +48,10 @@ public static class DependencyInjection
         services.AddScoped<IPlanFeasibilityService, PlanFeasibilityServiceImpl>();
         services.AddScoped<ICompanyOperatorService, CompanyOperatorServiceImpl>();
         services.AddScoped<IApiKeyService, ApiKeyServiceImpl>();
+        services.AddScoped<IRegionConsultationService, RegionConsultationServiceImpl>();
         
         services.AddScoped<IReadCvsUtil, ReadCsvUtil>();
+        services.AddScoped<ITextFormattingUtil, TextFormattingUtil>();
         
         return services;
     }

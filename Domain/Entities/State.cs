@@ -8,7 +8,9 @@ public class State
     public Guid Id { get; init; }
     public string Uf { get; init; }
     
+    /*__Relationships__*/
     public IEnumerable<Address> Addresses { get; init; }
+    public IEnumerable<RegionConsultation> RegionConsultations { get; init; }
     
     private State(){}
 

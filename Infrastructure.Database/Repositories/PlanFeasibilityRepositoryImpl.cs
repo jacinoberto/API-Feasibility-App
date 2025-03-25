@@ -24,56 +24,76 @@ public class PlanFeasibilityRepositoryImpl(AppDbContext context) : IPlanFeasibil
         throw new NotFoundException("Não foi entrada nenhuma viabilidade de plano para nenhum dos parâmetros informados.");
     }
 
-    public async Task<IEnumerable<PlanFeasibility>> GetByCityAndStateAsync(string city, string state, Guid companyId)
+    public async Task<IEnumerable<PlanFeasibility>> GetByCityAndStateAsync(string city, string state, Guid companyId, Guid operatorId)
     {
-        var operatorsId = await _context.CompanyOperators
-            .Where(co => co.CompanyId == companyId)
-            .Select(co => co.OperatorId)
-            .ToListAsync();
-
-        return await _context.PlanFeasibilities
+        var list = await _context.PlanFeasibilities
             .Include(f => f.OperatorPlan)
             .Include(f => f.OperatorPlan.Operator)
             .Include(f => f.OperatorPlan.Plan)
             .Include(f => f.OperatorPlan.Plan.Internet)
-            .Where(pf => operatorsId.Contains(pf.OperatorPlan.OperatorId))
-            .Where(pf => pf.Address.City.ToUpper().Contains(city.ToUpper())
-                         && pf.Address.State.Uf.ToUpper().Contains(state.ToUpper()))
+            .Where(pf =>
+                _context.CompanyOperators
+                    .Where(co => co.CompanyId == companyId)
+                    .Select(co => co.OperatorId)
+                    .Any(id => id == pf.OperatorPlan.OperatorId) // ✅ Usa Any() no IQueryable
+
+                && _context.RegionConsultations
+                    .Where(rc => rc.CompanyId == companyId)
+                    .Select(rc => rc.StateId)
+                    .Any(id => id == pf.Address.StateId) // ✅ Usa Any() no IQueryable
+
+                && pf.OperatorPlan.OperatorId == operatorId
+                && pf.Address.City.ToUpper().Contains(city.ToUpper())
+                && pf.Address.State.Uf.ToUpper().Contains(state.ToUpper()))
             .ToListAsync();
+
+        return list.Count > 0 ? list : throw new NotFoundException("Não há viabilidade para a cidade e estado informados.");
     }
 
-    public async Task<PlanFeasibility> GetByZipCodeAsync(Guid companyId, string zipCode)
+    public async Task<PlanFeasibility> GetByZipCodeAsync(Guid companyId, Guid operatorId, string zipCode)
     {
-        var operatorsId = await _context.CompanyOperators
-            .Where(co => co.CompanyId == companyId)
-            .Select(co => co.OperatorId)
-            .ToListAsync();
-
-        return await _context.PlanFeasibilities
+       return await _context.PlanFeasibilities
             .Include(f => f.OperatorPlan)
             .Include(f => f.OperatorPlan.Operator)
             .Include(f => f.OperatorPlan.Plan)
             .Include(f => f.OperatorPlan.Plan.Internet)
-            .Where(pf => operatorsId.Contains(pf.OperatorPlan.OperatorId))
-            .Where(pf => pf.Address.ZipCode == zipCode)
+            .Where(pf =>
+                _context.CompanyOperators
+                    .Where(co => co.CompanyId == companyId)
+                    .Select(co => co.OperatorId)
+                    .Any(id => id == pf.OperatorPlan.OperatorId) // ✅ Usa Any() no IQueryable
+
+                && _context.RegionConsultations
+                    .Where(rc => rc.CompanyId == companyId)
+                    .Select(rc => rc.StateId)
+                    .Any(id => id == pf.Address.StateId) // ✅ Usa Any() no IQueryable
+
+                && pf.OperatorPlan.OperatorId == operatorId
+                && pf.Address.ZipCode == zipCode)
             .FirstOrDefaultAsync()
             ?? throw new NotFoundException("Não há viabilidade para este CEP.");
     }
 
-    public async Task<PlanFeasibility> GetByCityAsync(Guid companyId, string city)
+    public async Task<PlanFeasibility> GetByCityAsync(Guid companyId, Guid operatorId, string city)
     {
-        var operatorsId = await _context.CompanyOperators
-            .Where(co => co.CompanyId == companyId)
-            .Select(co => co.OperatorId)
-            .ToListAsync();
-
         return await _context.PlanFeasibilities
                    .Include(f => f.OperatorPlan)
                    .Include(f => f.OperatorPlan.Operator)
                    .Include(f => f.OperatorPlan.Plan)
                    .Include(f => f.OperatorPlan.Plan.Internet)
-                   .Where(pf => operatorsId.Contains(pf.OperatorPlan.OperatorId))
-                   .Where(pf => pf.Address.City == city)
+                   .Where(pf =>
+                       _context.CompanyOperators
+                           .Where(co => co.CompanyId == companyId)
+                           .Select(co => co.OperatorId)
+                           .Any(id => id == pf.OperatorPlan.OperatorId) // ✅ Usa Any() no IQueryable
+
+                       && _context.RegionConsultations
+                           .Where(rc => rc.CompanyId == companyId)
+                           .Select(rc => rc.StateId)
+                           .Any(id => id == pf.Address.StateId) // ✅ Usa Any() no IQueryable
+
+                       && pf.OperatorPlan.OperatorId == operatorId
+                       && pf.Address.City.ToUpper().Contains(city.ToUpper()))
                    .FirstOrDefaultAsync()
                ?? throw new NotFoundException("Não há viabilidade para esta Cidade.");
     }

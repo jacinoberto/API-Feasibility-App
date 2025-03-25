@@ -20,6 +20,8 @@ public class AppDbContext : DbContext
     public DbSet<PlanFeasibility> PlanFeasibilities { get; set; }
     public DbSet<State> States { get; set; }
     
+    public DbSet<RegionConsultation> RegionConsultations { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
