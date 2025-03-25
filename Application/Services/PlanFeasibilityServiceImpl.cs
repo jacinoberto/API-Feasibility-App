@@ -78,8 +78,7 @@ public class PlanFeasibilityServiceImpl(IMediator mediator, ITextFormattingUtil 
     private async Task CrateAssociationAsync(Guid operatorId, Guid internetId, Guid? stateId,
         CreatePlanFeasibilityDto dto)
     {
-        var plano = dto.PlanName;
-        var planResult = await _mediator.Send(new CreatePlanCommand(internetId, _formatting.Format(dto.PlanName), dto.Value));
+        var planResult = await _mediator.Send(new CreatePlanCommand(internetId, null, Decimal.Zero));
         var op = await _mediator.Send(new CreateOperatorPlanCommand(operatorId, planResult.Id));
         var ad = await _mediator.Send(new CreateAddressCommand(stateId, dto.ZipCode, _formatting.Format(dto.Street),
             dto.Number, _formatting.Format(dto.Area), _formatting.Format(dto.City)));

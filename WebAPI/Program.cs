@@ -64,7 +64,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseMiddleware<GlobalErrorHandlingMiddleware>();
+//app.UseMiddleware<GlobalErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

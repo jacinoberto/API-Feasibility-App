@@ -72,12 +72,6 @@ public class PlanFeasibilityController(IPlanFeasibilityService service, IReadCvs
         }
         return Unauthorized("Token invalido.");
     }
-
-    //[HttpGet("by-parameters")]
-    //public async Task<IActionResult> GetByParametersAsync([FromQuery] string? zipCode, [FromQuery] string? city, [FromQuery] string? state)
-    //{
-    //    return Ok(await _service.GetByParametersAsync(zipCode, city, state));
-    //}
     
     /// <summary>
     /// Realiza o Upload do arquivo CSV contendo as informaçoes sobre os planos de uma ou mais operadoras. O arquivo
@@ -96,23 +90,10 @@ public class PlanFeasibilityController(IPlanFeasibilityService service, IReadCvs
         var plans = _csv.ReadCvsPlanFeasibility(stream);
 
         await _service.CreateAllAsync(plans.Select(
-            csvReturn => new CreatePlanFeasibilityDto(csvReturn.Operator, csvReturn.PlanName,
-                csvReturn.InternetSpeed, csvReturn.SpeedType,
-                csvReturn.Value, csvReturn.ZipCode, csvReturn.Street, csvReturn.Number,
-                csvReturn.Area, csvReturn.City, csvReturn.State)).ToList());
+            csvReturn => new CreatePlanFeasibilityDto(csvReturn.Operator, csvReturn.InternetSpeed, csvReturn.SpeedType,
+                csvReturn.ZipCode, csvReturn.Street, csvReturn.Number, csvReturn.Area, csvReturn.City, csvReturn.State))
+            .ToList());
         
         return StatusCode(201);
-    }
-
-    [HttpGet("teste")]
-    public IActionResult teste()
-    {
-        if (HttpContext.Items.TryGetValue("CompanyId", out var companyId))
-        {
-            var companyGuid = (Guid)companyId;
-            return Ok(companyGuid);
-        }
-        
-        return Unauthorized("CompanyId não encontrado.");
     }
 }

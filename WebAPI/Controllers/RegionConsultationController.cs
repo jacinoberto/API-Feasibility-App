@@ -10,6 +10,11 @@ public class RegionConsultationController(IRegionConsultationService service) : 
 {
     private readonly IRegionConsultationService _service = service;
 
+    /// <summary>
+    /// Define em quais estados uma empresa pode consultar viabilidade
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns>IActionResult</returns>
     [HttpPost("create")]
     public async Task<IActionResult> CreateAllAsync(IEnumerable<CreateRegionConsultationDto> dto)
     {
@@ -17,6 +22,10 @@ public class RegionConsultationController(IRegionConsultationService service) : 
         return StatusCode(201);
     }
 
+    /// <summary>
+    /// Retorna todos os estados disponíveis para consulta de viabilidade.
+    /// </summary>
+    /// <returns>IActionResult</returns>
     [HttpGet("regions")]
     public async Task<IActionResult> GetRegionsByCompanyIdAsync()
     {

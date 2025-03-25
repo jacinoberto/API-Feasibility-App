@@ -17,7 +17,7 @@ public class ApiKeyMiddleware(RequestDelegate next, IServiceProvider serviceProv
             
             Console.WriteLine($"Middleware interceptou: {path}");
             
-            if (path.StartsWith("/api/key/create"))
+            if (path.StartsWith("/api/key/create") || path.StartsWith("/api/company/create"))
             {
                 Console.WriteLine($"Permitindo acesso a api key");
                 
@@ -39,7 +39,7 @@ public class ApiKeyMiddleware(RequestDelegate next, IServiceProvider serviceProv
             if (!isValid)
             {
                 context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                await context.Response.WriteAsync("API Key inválida.");
+                await context.Response.WriteAsync("Token invalido.");
                 return;
             }
             

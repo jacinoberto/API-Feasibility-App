@@ -9,7 +9,6 @@ public static class PlanFeasibilityMapper
     {
         var internet = planFeasibility.OperatorPlan.Plan.Internet.InternetSpeed + " " + planFeasibility.OperatorPlan.Plan.Internet.SpeedType;
         
-        return new ReturnPlanFeasibilitDto(planFeasibility.Id, planFeasibility.OperatorPlan.Operator.OperatorName,
-            planFeasibility.OperatorPlan.Plan.PlanName, internet, planFeasibility.OperatorPlan.Plan.Value);
+        return new ReturnPlanFeasibilitDto(planFeasibility.Id, planFeasibility.OperatorPlan.Operator.OperatorName, internet);
     }
 }
