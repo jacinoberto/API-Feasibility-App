@@ -64,5 +64,12 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
             .HasColumnType("tinyint(1)")
             .HasDefaultValue(true)
             .IsRequired();
+        
+        /*__Index__*/
+        builder.HasIndex(co =>
+                new { co.CompanyCode, co.ResponsibleEmail, co.FinancialEmail })
+            .IsUnique();
+
+        builder.HasIndex(co => co.CompanyName);
     }
 }

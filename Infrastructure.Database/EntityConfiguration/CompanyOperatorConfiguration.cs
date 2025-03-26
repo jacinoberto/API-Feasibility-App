@@ -28,6 +28,9 @@ public class CompanyOperatorConfiguration : IEntityTypeConfiguration<CompanyOper
             .HasColumnName("operator_id")
             .IsRequired();
         
+        /*__Index__*/
+        builder.HasIndex(cp => cp.CompanyId);
+        
         /*__Relationships__*/
         builder.HasOne(cp => cp.Company)
             .WithMany(company => company.CompanyOperators)

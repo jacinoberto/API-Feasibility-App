@@ -24,5 +24,8 @@ public class StateConfiguration: IEntityTypeConfiguration<State>
             .HasColumnName("uf")
             .HasColumnType("char(2)")
             .HasMaxLength(2);
+        
+        /*__Index__*/
+        builder.HasIndex(s => s.Uf);
     }
 }

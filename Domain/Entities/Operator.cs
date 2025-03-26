@@ -10,7 +10,7 @@ public class Operator
     
     /*Relationships*/
     public IEnumerable<CompanyOperator> CompaniesOperators { get; set; }
-    public IEnumerable<OperatorPlan> OperatorPlans { get; set; }
+    public IEnumerable<Feasibility> Feasibilities { get; set; }
     
     private Operator() {}
 

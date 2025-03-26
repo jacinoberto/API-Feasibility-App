@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.CQRS.PlanFeasibilityCQRS.Handles;
 
-public class ReturnPlanFeasibilityByZipCodeQueryHandler(IPlanFeasibilityRepository repository)
+/*public class ReturnPlanFeasibilityByZipCodeQueryHandler(IPlanFeasibilityRepository repository)
     : IRequestHandler<ReturnPlanFeasibilityByZipCodeQuery, PlanFeasibility>
 {
     private readonly IPlanFeasibilityRepository _repository = repository;
@@ -14,4 +14,4 @@ public class ReturnPlanFeasibilityByZipCodeQueryHandler(IPlanFeasibilityReposito
     {
         return await _repository.GetByZipCodeAsync(request.CompanyId, request.OperatorId, request.ZipCode);
     }
-}
+}*/

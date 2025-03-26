@@ -4,7 +4,7 @@ namespace Domain.Interfaces;
 
 public interface IPlanFeasibilityRepository
 {
-    Task CreateAsync(PlanFeasibility entity);
+    /*Task CreateAsync(PlanFeasibility entity);
     Task<PlanFeasibility> GetByParametersAsync(string? zipCode, string? city, string? state);
     
     Task<IEnumerable<PlanFeasibility>> GetByCityAndStateAsync(string city, string state, Guid companyId, Guid operatorId);
@@ -13,5 +13,5 @@ public interface IPlanFeasibilityRepository
     Task<PlanFeasibility> GetByCityAsync(Guid companyId, Guid operatorId, string city);
     Task<PlanFeasibility> GetByZipCodeAsync(string zipCode);
     Task<PlanFeasibility> GetByCityAsync(string city);
-    Task<PlanFeasibility> GetByStateAsync(string state);
+    Task<PlanFeasibility> GetByStateAsync(string state);*/
 }

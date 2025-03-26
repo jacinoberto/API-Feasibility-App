@@ -12,10 +12,9 @@ public class Address
     public string? Area { get; init; }
     public string? City { get; init; }
     
-    public State? State { get; set; }
-    
     /*Relationships*/
-    public IEnumerable<PlanFeasibility> PlanFeasibility { get; set; }
+    public State? State { get; set; }
+    public IEnumerable<Feasibility> Feasibilities { get; set; }
     private Address() { }
     
     public Address(Guid? stateId, string? zipCode, string? street, int? number, string? area, string? city)

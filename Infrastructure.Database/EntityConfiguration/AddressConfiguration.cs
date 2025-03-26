@@ -48,6 +48,10 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .HasMaxLength(50)
             .IsRequired(false);
         
+        /*__Index__*/
+        builder.HasIndex(a =>
+            new { a.ZipCode, a.City, a.StateId });
+        
         /*__Relationship__*/
         builder.HasOne(address => address.State)
             .WithMany(state => state.Addresses)

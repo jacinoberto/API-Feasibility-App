@@ -16,7 +16,7 @@ public class PlanFeasibilityRepositoryImpl(AppDbContext context) : IPlanFeasibil
         await _context.SaveChangesAsync();
     }
 
-    public async Task<PlanFeasibility> GetByParametersAsync(string? zipCode, string? city, string? state)
+    /*public async Task<PlanFeasibility> GetByParametersAsync(string? zipCode, string? city, string? state)
     {
         if (zipCode is not null) return await GetByZipCodeAsync(zipCode);
         if (city is not null) return await GetByCityAsync(city);
@@ -118,7 +118,7 @@ public class PlanFeasibilityRepositoryImpl(AppDbContext context) : IPlanFeasibil
                    .Include(f => f.OperatorPlan.Operator)
                    .Include(f => f.OperatorPlan.Plan)
                    .Include(f => f.OperatorPlan.Plan.Internet)
-                   .FirstOrDefaultAsync(f => f.Address.City != null 
+                   .FirstOrDefaultAsync(f => f.Address.City != null
                                              && f.Address.City.ToUpper()
                                                  .Contains(city
                                                      .ToUpper()))
@@ -132,9 +132,9 @@ public class PlanFeasibilityRepositoryImpl(AppDbContext context) : IPlanFeasibil
                    .Include(f => f.OperatorPlan.Operator)
                    .Include(f => f.OperatorPlan.Plan)
                    .Include(f => f.OperatorPlan.Plan.Internet)
-                   .FirstOrDefaultAsync(f => f.Address.State != null 
+                   .FirstOrDefaultAsync(f => f.Address.State != null
                                              && f.Address.State.Uf.ToUpper()
                                                  .Contains(state.ToUpper()))
                ?? throw new NotFoundException("Não foi encontrada nenhuma viabilidade de plano para esse estado.");
-    }
+    }*/
 }

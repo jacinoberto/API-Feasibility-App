@@ -29,7 +29,7 @@ public class OperatorPlanConfiguration : IEntityTypeConfiguration<OperatorPlan>
             .IsRequired();
         
         /*__Relationships__*/
-        builder.HasOne(op => op.Operator)
+        /*builder.HasOne(op => op.Operator)
             .WithMany(o => o.OperatorPlans)
             .HasForeignKey(op => op.OperatorId)
             .OnDelete(DeleteBehavior.Cascade);
@@ -37,6 +37,6 @@ public class OperatorPlanConfiguration : IEntityTypeConfiguration<OperatorPlan>
         builder.HasOne(op => op.Plan)
             .WithMany(plan => plan.OperatorPlans)
             .HasForeignKey(op => op.PlanId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade);*/
     }
 }

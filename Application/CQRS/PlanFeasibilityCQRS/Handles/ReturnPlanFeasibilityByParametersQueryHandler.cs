@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.CQRS.PlanFeasibilityCQRS.Handles;
 
-public class ReturnPlanFeasibilityByParametersQueryHandler(IPlanFeasibilityRepository repository)
+/*public class ReturnPlanFeasibilityByParametersQueryHandler(IPlanFeasibilityRepository repository)
     : IRequestHandler<ReturnPlanFeasibilityByParametersQuery, PlanFeasibility>
 {
     private readonly IPlanFeasibilityRepository _repository = repository;
@@ -14,4 +14,4 @@ public class ReturnPlanFeasibilityByParametersQueryHandler(IPlanFeasibilityRepos
     {
         return await _repository.GetByParametersAsync(request.ZipCode, request.City, request.State);
     }
-}
+}*/

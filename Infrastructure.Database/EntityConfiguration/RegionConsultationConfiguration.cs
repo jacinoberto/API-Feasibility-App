@@ -28,6 +28,9 @@ public class RegionConsultationConfiguration : IEntityTypeConfiguration<RegionCo
             .HasColumnName("state_id")
             .IsRequired();
         
+        /*_index__*/
+        builder.HasIndex(rc => rc.CompanyId);
+        
         /*__Relationships__*/
         builder.HasOne(rc => rc.Company)
             .WithMany(c => c.RegionConsultations)

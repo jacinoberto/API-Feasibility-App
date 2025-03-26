@@ -38,6 +38,8 @@ public static class DependencyInjection
         services.AddScoped<IPlanFeasibilityRepository, PlanFeasibilityRepositoryImpl>();
         services.AddScoped<IApiKeyRepository, ApiKeyRepositoryImpl>();
         services.AddScoped<IRegionConsultationRepository, RegionConsultationRepositoryImpl>();
+        services.AddScoped<IFeasibilityRepository, FeasibilityRepositoryImpl>();
+        services.AddScoped<IFeasibilityTypeRepository, FeasibilityTypeRepositoryImpl>();
         
         /*__Registering Services__*/
         services.AddScoped<IStateService, StateServiceImpl>();
@@ -51,6 +53,7 @@ public static class DependencyInjection
         services.AddScoped<ICompanyOperatorService, CompanyOperatorServiceImpl>();
         services.AddScoped<IApiKeyService, ApiKeyServiceImpl>();
         services.AddScoped<IRegionConsultationService, RegionConsultationServiceImpl>();
+        services.AddScoped<IFeasibilityService, FeasibilityServiceImpl>();
         
         services.AddScoped<IReadCvsUtil, ReadCsvUtil>();
         services.AddScoped<ITextFormattingUtil, TextFormattingUtil>();

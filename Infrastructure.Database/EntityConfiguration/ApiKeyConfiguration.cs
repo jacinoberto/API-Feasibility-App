@@ -26,8 +26,8 @@ public class ApiKeyConfiguration : IEntityTypeConfiguration<ApiKey>
         
         builder.Property(ak => ak.Key)
             .HasColumnName("key")
-            .HasColumnType("varchar(255)")
-            .HasMaxLength(255)
+            .HasColumnType("text")
+            .HasMaxLength(400)
             .IsUnicode()
             .IsRequired();
 

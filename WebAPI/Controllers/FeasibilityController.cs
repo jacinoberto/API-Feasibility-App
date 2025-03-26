@@ -1,0 +1,39 @@
+﻿using Application.DTOs;
+using Application.DTOs.FeasibilityDTO;
+using Application.Services;
+using Application.Utils.ReadCSVs.CSVs;
+using Domain.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using WebAPI.Util;
+
+namespace WebAPI.Controllers;
+
+[Route("api/feasibility")]
+[ApiController]
+public class FeasibilityController(IFeasibilityService service, IReadCvsUtil csv) : ControllerBase
+{
+    private readonly IFeasibilityService _service = service;
+    private readonly IReadCvsUtil _csv = csv;
+    
+    /// <summary>
+    /// Upload do arquivo CSV que contem as viabilidades de uma ou mais operadoras. Esse arquivo deve conter as seguintes
+    /// colunas: Operadora, CEP, Rua, Numero, Bairro, Cidade e Estado/UF.
+    /// </summary>
+    /// <param name="file"></param>
+    /// <returns>IActionResult</returns>
+    [HttpPost("upload")]
+    public async Task<IActionResult> UploadFeasibilityAsync([FromForm] ReceiverCsv file)
+    {
+        if (file.File == null || file.File.Length == 0)
+            return BadRequest("Nenhum arquivo encontrado");
+        
+        using var stream = file.File.OpenReadStream();
+        var plans = _csv.ReadCvsPlanFeasibility(stream);
+
+        await _service.CreateAllAsync(plans.Select(plan => new CreateFeasibilityDto(plan.Operator, plan.ZipCode,
+                plan.Street, plan.Number, plan.Area, plan.City, plan.State))
+            .ToList());
+        
+        return StatusCode(201);
+    }
+}

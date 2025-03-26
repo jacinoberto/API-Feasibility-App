@@ -6,7 +6,7 @@ using WebAPI.Util;
 
 namespace WebAPI.Controllers;
 
-[Route("api/feasibility")]
+/*[Route("api/feasibility")]
 [ApiController]
 public class PlanFeasibilityController(IPlanFeasibilityService service, IReadCvsUtil csv) : ControllerBase
 {
@@ -96,4 +96,4 @@ public class PlanFeasibilityController(IPlanFeasibilityService service, IReadCvs
         
         return StatusCode(201);
     }
-}
+}*/

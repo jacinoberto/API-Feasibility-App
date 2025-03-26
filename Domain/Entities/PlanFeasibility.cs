@@ -5,28 +5,23 @@ namespace Domain.Entities;
 public class PlanFeasibility
 {
     public Guid Id { get; init; }
-    public Guid OperatorPlanId { get; init; }
-    public Guid AddressId { get; init; }
+    public Guid PlanId { get; init; }
+    public Guid FeasibilityId { get; init; }
+    public Guid FeasibilityTypeId { get; init; }
+    public bool IsActive { get; private set; }
 
     /*__Relationships__*/
-    public OperatorPlan OperatorPlan { get; set; }
-    public Address Address { get; set; }
+    public Plan Plan { get; set; }
+    public Feasibility Feasibility { get; set; }
+    public FeasibilityType FeasibilityType { get; set; }
     
     private PlanFeasibility() { }
     
-    public PlanFeasibility( Guid operatorPlanId, Guid addressId)
+    public PlanFeasibility( Guid planId, Guid feasibilityId, Guid feasibilityTypeId)
     {
-        OperatorPlanId = operatorPlanId;
-        AddressId = addressId;
-    }
-}
-
-public class PlanFeasibilityFactory
-{
-    public static PlanFeasibility Factory(Guid operatorPlanId, Guid addressId)
-    {
-        InvalidDataException.When(string.IsNullOrEmpty(operatorPlanId.ToString()), "O ID da operadora é obrigatório para vinculo com endereço.");
-        InvalidDataException.When(string.IsNullOrEmpty(addressId.ToString()), "O ID do endereço é obrigatório para vinculo com operadora.");
-        return new PlanFeasibility(operatorPlanId, addressId);
+        PlanId = planId;
+        FeasibilityId = feasibilityId;
+        FeasibilityTypeId = feasibilityTypeId;
+        IsActive = true;
     }
 }

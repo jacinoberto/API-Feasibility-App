@@ -58,6 +58,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("StateId");
 
+                    b.HasIndex("ZipCode", "City", "StateId");
+
                     b.ToTable("tb_addresses", (string)null);
                 });
 
@@ -84,9 +86,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Key")
                         .IsRequired()
-                        .HasMaxLength(255)
+                        .HasMaxLength(400)
                         .IsUnicode(true)
-                        .HasColumnType("varchar(255)")
+                        .HasColumnType("text")
                         .HasColumnName("key");
 
                     b.HasKey("Id");
@@ -146,6 +148,11 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyName");
+
+                    b.HasIndex("CompanyCode", "ResponsibleEmail", "FinancialEmail")
+                        .IsUnique();
+
                     b.ToTable("tb_companies", (string)null);
                 });
 
@@ -171,6 +178,48 @@ namespace Infrastructure.Migrations
                     b.HasIndex("OperatorId");
 
                     b.ToTable("tb_companies_operators", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Feasibility", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id_feasibility");
+
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("address_id");
+
+                    b.Property<Guid>("OperatorId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("operator_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("OperatorId");
+
+                    b.ToTable("tb_feasibilities", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.FeasibilityType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id_feasibility_type");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tb_feasibility_types", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Internet", b =>
@@ -283,19 +332,32 @@ namespace Infrastructure.Migrations
                         .HasColumnType("char(36)")
                         .HasColumnName("id_plan_feasibility");
 
-                    b.Property<Guid>("AddressId")
+                    b.Property<Guid>("FeasibilityId")
                         .HasColumnType("char(36)")
-                        .HasColumnName("address_id");
+                        .HasColumnName("feasibility_type_id");
 
-                    b.Property<Guid>("OperatorPlanId")
+                    b.Property<Guid>("FeasibilityTypeId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<Guid?>("OperatorPlanId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("PlanId")
                         .HasColumnType("char(36)")
-                        .HasColumnName("operator_plan_id");
+                        .HasColumnName("feasibility_id");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressId");
+                    b.HasIndex("FeasibilityId");
+
+                    b.HasIndex("FeasibilityTypeId");
 
                     b.HasIndex("OperatorPlanId");
+
+                    b.HasIndex("PlanId");
 
                     b.ToTable("tb_plans_feasibility", (string)null);
                 });
@@ -338,6 +400,8 @@ namespace Infrastructure.Migrations
                         .HasColumnName("uf");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Uf");
 
                     b.ToTable("tb_states", (string)null);
                 });
@@ -382,16 +446,35 @@ namespace Infrastructure.Migrations
                     b.Navigation("Operator");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Feasibility", b =>
+                {
+                    b.HasOne("Domain.Entities.Address", "Address")
+                        .WithMany("Feasibilities")
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Operator", "Operator")
+                        .WithMany("Feasibilities")
+                        .HasForeignKey("OperatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Operator");
+                });
+
             modelBuilder.Entity("Domain.Entities.OperatorPlan", b =>
                 {
                     b.HasOne("Domain.Entities.Operator", "Operator")
-                        .WithMany("OperatorPlans")
+                        .WithMany()
                         .HasForeignKey("OperatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Plan", "Plan")
-                        .WithMany("OperatorPlans")
+                        .WithMany()
                         .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -414,21 +497,33 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.PlanFeasibility", b =>
                 {
-                    b.HasOne("Domain.Entities.Address", "Address")
-                        .WithMany("PlanFeasibility")
-                        .HasForeignKey("AddressId")
+                    b.HasOne("Domain.Entities.Feasibility", "Feasibility")
+                        .WithMany("PlanFeasibilities")
+                        .HasForeignKey("FeasibilityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.OperatorPlan", "OperatorPlan")
-                        .WithMany("PlanFeasibility")
-                        .HasForeignKey("OperatorPlanId")
+                    b.HasOne("Domain.Entities.FeasibilityType", "FeasibilityType")
+                        .WithMany("PlanFeasibilities")
+                        .HasForeignKey("FeasibilityTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Address");
+                    b.HasOne("Domain.Entities.OperatorPlan", null)
+                        .WithMany("PlanFeasibility")
+                        .HasForeignKey("OperatorPlanId");
 
-                    b.Navigation("OperatorPlan");
+                    b.HasOne("Domain.Entities.Plan", "Plan")
+                        .WithMany("PlanFeasibilities")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Feasibility");
+
+                    b.Navigation("FeasibilityType");
+
+                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("Domain.Entities.RegionConsultation", b =>
@@ -452,7 +547,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Address", b =>
                 {
-                    b.Navigation("PlanFeasibility");
+                    b.Navigation("Feasibilities");
                 });
 
             modelBuilder.Entity("Domain.Entities.Company", b =>
@@ -464,6 +559,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("RegionConsultations");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Feasibility", b =>
+                {
+                    b.Navigation("PlanFeasibilities");
+                });
+
+            modelBuilder.Entity("Domain.Entities.FeasibilityType", b =>
+                {
+                    b.Navigation("PlanFeasibilities");
+                });
+
             modelBuilder.Entity("Domain.Entities.Internet", b =>
                 {
                     b.Navigation("Plans");
@@ -473,7 +578,7 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("CompaniesOperators");
 
-                    b.Navigation("OperatorPlans");
+                    b.Navigation("Feasibilities");
                 });
 
             modelBuilder.Entity("Domain.Entities.OperatorPlan", b =>
@@ -483,7 +588,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Plan", b =>
                 {
-                    b.Navigation("OperatorPlans");
+                    b.Navigation("PlanFeasibilities");
                 });
 
             modelBuilder.Entity("Domain.Entities.State", b =>

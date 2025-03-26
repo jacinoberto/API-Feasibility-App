@@ -5,9 +5,8 @@
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InsertStateTable : Migration
+    public partial class InsertTablesStateAndFeasibilityType : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.InsertData(
@@ -42,6 +41,15 @@ namespace Infrastructure.Migrations
                     { Guid.Parse("c3ea622a-a63f-4d1a-9070-faab42f5a340"), "SP" },
                     { Guid.Parse("87835c9b-89ac-4380-be9d-ffad4ce1a727"), "SE" },
                     { Guid.Parse("b0781524-7c8f-4679-b6e9-e0a082dcb920"), "TO" }
+                });
+            
+            migrationBuilder.InsertData(
+                table: "tb_feasibility_types",
+                columns: new[] { "id_feasibility_type", "type" },
+                values: new object[,]
+                {
+                    { Guid.Parse("61dd0e8e-db55-4f53-9180-7a3847533246"), "Cidade" },
+                    { Guid.Parse("c7ce8e12-30ac-43fd-b15f-07a22ee6f27c"), "Estado" }
                 });
         }
 
@@ -84,6 +92,21 @@ namespace Infrastructure.Migrations
                 migrationBuilder.DeleteData(
                     table: "tb_states",
                     keyColumn: "id_state",
+                    keyValue: id
+                );
+            }
+            
+            var feasibilityTypeIds = new List<Guid>
+            {
+                Guid.Parse("61dd0e8e-db55-4f53-9180-7a3847533246"),
+                Guid.Parse("c7ce8e12-30ac-43fd-b15f-07a22ee6f27c")
+            };
+
+            foreach (var id in feasibilityTypeIds)
+            {
+                migrationBuilder.DeleteData(
+                    table: "tb_feasibility_types",
+                    keyColumn: "id_feasibility_type",
                     keyValue: id
                 );
             }

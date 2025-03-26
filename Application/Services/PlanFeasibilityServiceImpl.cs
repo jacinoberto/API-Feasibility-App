@@ -22,7 +22,7 @@ public class PlanFeasibilityServiceImpl(IMediator mediator, ITextFormattingUtil 
     private readonly IMediator _mediator = mediator;
     private readonly ITextFormattingUtil _formatting = formatting;
     
-    public async Task CreateAsync(CreatePlanFeasibilityDto dto)
+    /*public async Task CreateAsync(CreatePlanFeasibilityDto dto)
     {
         if (dto == null) throw new ArgumentNullException(nameof(dto), "Os dados do plano são obrigatórios.");
 
@@ -84,5 +84,5 @@ public class PlanFeasibilityServiceImpl(IMediator mediator, ITextFormattingUtil 
             dto.Number, _formatting.Format(dto.Area), _formatting.Format(dto.City)));
 
         await _mediator.Send(new CreatePlanFeasibilityCommand(op.Id, ad.Id));
-    }
+    }*/
 }
