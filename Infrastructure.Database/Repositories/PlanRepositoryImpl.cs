@@ -25,6 +25,12 @@ public class PlanRepositoryImpl(AppDbContext context) : IPlanRepository
             ?? throw new NotFoundException("Não foi entrado nenhum plano com o ID informado.");
     }
 
+    public async Task<Plan?> GetByParametersAsync(string plan, decimal value, Guid internetId)
+    {
+        return await _context.Plans.FirstOrDefaultAsync(p =>
+            p.PlanName == plan && p.Value == value && p.InternetId == internetId);
+    }
+
     public async Task<IEnumerable<Plan>> GetAllAsync()
     {
         return await _context.Plans

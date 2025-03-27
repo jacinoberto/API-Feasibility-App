@@ -5,7 +5,7 @@
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InsertTablesStateAndFeasibilityType : Migration
+    public partial class InsertTablesStateAndFeabilityType : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -42,7 +42,7 @@ namespace Infrastructure.Migrations
                     { Guid.Parse("87835c9b-89ac-4380-be9d-ffad4ce1a727"), "SE" },
                     { Guid.Parse("b0781524-7c8f-4679-b6e9-e0a082dcb920"), "TO" }
                 });
-            
+
             migrationBuilder.InsertData(
                 table: "tb_feasibility_types",
                 columns: new[] { "id_feasibility_type", "type" },
@@ -95,7 +95,7 @@ namespace Infrastructure.Migrations
                     keyValue: id
                 );
             }
-            
+
             var feasibilityTypeIds = new List<Guid>
             {
                 Guid.Parse("61dd0e8e-db55-4f53-9180-7a3847533246"),

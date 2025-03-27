@@ -15,6 +15,7 @@ public class Company
     public IEnumerable<ApiKey> ApiKeys { get; set; }
     public IEnumerable<CompanyOperator> CompanyOperators { get; set; }
     public IEnumerable<RegionConsultation> RegionConsultations { get; set; }
+    public IEnumerable<ViabilityRule> ViabilityRules { get; set; }
     
     private Company(){}
 

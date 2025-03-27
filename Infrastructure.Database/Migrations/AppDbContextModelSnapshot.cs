@@ -406,6 +406,90 @@ namespace Infrastructure.Migrations
                     b.ToTable("tb_states", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.ViabilityCity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id_viability_city");
+
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("address_id");
+
+                    b.Property<Guid>("ViabilityRuleId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("viability_rule_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("ViabilityRuleId", "AddressId");
+
+                    b.ToTable("tb_viability_cities", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.ViabilityRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id_viability_rule");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("company_id");
+
+                    b.Property<Guid>("FeasibilityTypeId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("feasibility_type_id");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("plan_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeasibilityTypeId");
+
+                    b.HasIndex("PlanId");
+
+                    b.HasIndex("CompanyId", "PlanId", "FeasibilityTypeId");
+
+                    b.ToTable("tb_viability_rules", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.ViabilityState", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id_viability_state");
+
+                    b.Property<Guid>("StateId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("state_id");
+
+                    b.Property<Guid>("ViabilityRuleId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("viability_rule_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StateId");
+
+                    b.HasIndex("ViabilityRuleId", "StateId");
+
+                    b.ToTable("tb_viability_states", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Address", b =>
                 {
                     b.HasOne("Domain.Entities.State", "State")
@@ -545,9 +629,76 @@ namespace Infrastructure.Migrations
                     b.Navigation("State");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ViabilityCity", b =>
+                {
+                    b.HasOne("Domain.Entities.Address", "Address")
+                        .WithMany("ViabilityCity")
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.ViabilityRule", "ViabilityRule")
+                        .WithMany("ViabilityCities")
+                        .HasForeignKey("ViabilityRuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("ViabilityRule");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ViabilityRule", b =>
+                {
+                    b.HasOne("Domain.Entities.Company", "Company")
+                        .WithMany("ViabilityRules")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.FeasibilityType", "FeasibilityType")
+                        .WithMany("ViabilityRules")
+                        .HasForeignKey("FeasibilityTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Plan", "Plan")
+                        .WithMany("ViabilityRules")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("FeasibilityType");
+
+                    b.Navigation("Plan");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ViabilityState", b =>
+                {
+                    b.HasOne("Domain.Entities.State", "State")
+                        .WithMany("ViabilityStates")
+                        .HasForeignKey("StateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.ViabilityRule", "ViabilityRule")
+                        .WithMany("ViabilityStates")
+                        .HasForeignKey("ViabilityRuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("State");
+
+                    b.Navigation("ViabilityRule");
+                });
+
             modelBuilder.Entity("Domain.Entities.Address", b =>
                 {
                     b.Navigation("Feasibilities");
+
+                    b.Navigation("ViabilityCity");
                 });
 
             modelBuilder.Entity("Domain.Entities.Company", b =>
@@ -557,6 +708,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("CompanyOperators");
 
                     b.Navigation("RegionConsultations");
+
+                    b.Navigation("ViabilityRules");
                 });
 
             modelBuilder.Entity("Domain.Entities.Feasibility", b =>
@@ -567,6 +720,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.FeasibilityType", b =>
                 {
                     b.Navigation("PlanFeasibilities");
+
+                    b.Navigation("ViabilityRules");
                 });
 
             modelBuilder.Entity("Domain.Entities.Internet", b =>
@@ -589,6 +744,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Plan", b =>
                 {
                     b.Navigation("PlanFeasibilities");
+
+                    b.Navigation("ViabilityRules");
                 });
 
             modelBuilder.Entity("Domain.Entities.State", b =>
@@ -596,6 +753,15 @@ namespace Infrastructure.Migrations
                     b.Navigation("Addresses");
 
                     b.Navigation("RegionConsultations");
+
+                    b.Navigation("ViabilityStates");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ViabilityRule", b =>
+                {
+                    b.Navigation("ViabilityCities");
+
+                    b.Navigation("ViabilityStates");
                 });
 #pragma warning restore 612, 618
         }

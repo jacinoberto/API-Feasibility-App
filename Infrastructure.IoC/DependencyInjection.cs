@@ -40,6 +40,9 @@ public static class DependencyInjection
         services.AddScoped<IRegionConsultationRepository, RegionConsultationRepositoryImpl>();
         services.AddScoped<IFeasibilityRepository, FeasibilityRepositoryImpl>();
         services.AddScoped<IFeasibilityTypeRepository, FeasibilityTypeRepositoryImpl>();
+        services.AddScoped<IViabilityRuleRepository, ViabilityRuleRepositoryImpl>();
+        services.AddScoped<IViabilityStateRepository, ViabilityStateRepositoryImpl>();
+        services.AddScoped<IViabilityCityRepository, ViabilityCityRepositoryImpl>();
         
         /*__Registering Services__*/
         services.AddScoped<IStateService, StateServiceImpl>();

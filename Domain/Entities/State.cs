@@ -9,8 +9,9 @@ public class State
     public string Uf { get; init; }
     
     /*__Relationships__*/
-    public IEnumerable<Address> Addresses { get; init; }
-    public IEnumerable<RegionConsultation> RegionConsultations { get; init; }
+    public IEnumerable<Address> Addresses { get; set; }
+    public IEnumerable<RegionConsultation> RegionConsultations { get; set; }
+    public IEnumerable<ViabilityState> ViabilityStates { get; set; }
     
     private State(){}
 

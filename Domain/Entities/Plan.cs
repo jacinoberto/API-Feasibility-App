@@ -13,6 +13,7 @@ public class Plan
     /*__Relationships__*/
     public Internet Internet { get; set; }
     public IEnumerable<PlanFeasibility> PlanFeasibilities { get; set; }
+    public IEnumerable<ViabilityRule> ViabilityRules { get; set; }
     
     private Plan(){}
 

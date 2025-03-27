@@ -25,6 +25,13 @@ public class AddressRepositoryImpl(AppDbContext context) : IAddressRepository
             ?? throw new NotFoundException("Não foi entrado nenhum endereço com o ID informado.");
     }
 
+    public async Task<Address> GetByCityAndStateAsync(string city, string state)
+    {
+        return await _context.Addresses
+            .FirstOrDefaultAsync(a => a.City == city && a.State.Uf == state)
+            ?? throw new NotFoundException("Não há viabilidade para esta cidade na base dados da operadora!");
+    }
+
     public async Task<Address> GetByParameters(string? zipCode, string? city, string? state)
     {
         return await _context.Addresses

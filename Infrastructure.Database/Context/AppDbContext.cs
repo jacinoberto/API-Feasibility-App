@@ -20,6 +20,14 @@ public class AppDbContext : DbContext
     public DbSet<PlanFeasibility> PlanFeasibilities { get; set; }
     public DbSet<State> States { get; set; }
     
+    public DbSet<ViabilityRule> ViabilityRules { get; set; }
+    
+    public DbSet<ViabilityState> ViabilityStates { get; set; }
+    
+    public DbSet<ViabilityCity> ViabilityCities { get; set; }
+    
+    
+    
     public DbSet<FeasibilityType> FeasibilityTypes { get; set; }
     
     public DbSet<Feasibility> Feasibilities { get; set; }
