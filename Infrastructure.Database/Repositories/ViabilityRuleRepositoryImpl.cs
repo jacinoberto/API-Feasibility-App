@@ -96,6 +96,8 @@ public class ViabilityRuleRepositoryImpl(AppDbContext context) : IViabilityRuleR
                 && vr.IsActive == true)
             .ToListAsync();
 
+        var plansId = viabilityRules.Select(vr => vr.PlanId).ToList();
+
         if (viabilityRules.Count == 0) throw new NotFoundException("A sua empresa não possuí nenhuma configuração para a consulta dos planos!");
         
         //var viabilityStates = await _context.ViabilityStates.Where(vs => vs.ViabilityRuleId == viabilityRuleId).ToListAsync();
@@ -103,6 +105,13 @@ public class ViabilityRuleRepositoryImpl(AppDbContext context) : IViabilityRuleR
 
         foreach (var viabilityRule in viabilityRules)
         {
+            foreach (var planId in plansId)
+            {
+                var plan = await _context.Plans.FindAsync(planId);
+                plan.DeactivatePlan();
+                await _context.SaveChangesAsync();
+            }
+            
             viabilityRule.Disable();
             await _context.SaveChangesAsync();
         }
