@@ -63,6 +63,7 @@ public static class DependencyInjection
 
         services.AddSingleton<IValidationErrorStrategy, ValidateDataInvalidError>();
         services.AddSingleton<IValidationErrorStrategy, ValidateNotFoundError>();
+        services.AddSingleton<IValidationErrorStrategy, ValidateInternalErrorError>();
         
         return services;
     }

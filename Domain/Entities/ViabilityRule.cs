@@ -22,5 +22,11 @@ public class ViabilityRule
         PlanId = planId;
         CompanyId = companyId;
         FeasibilityTypeId = feasibilityTypeId;
+        IsActive = true;
+    }
+
+    public void Disable()
+    {
+        IsActive = false;
     }
 }

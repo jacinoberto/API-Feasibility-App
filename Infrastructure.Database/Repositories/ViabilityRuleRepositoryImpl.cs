@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,12 @@ public class ViabilityRuleRepositoryImpl(AppDbContext context) : IViabilityRuleR
     
     public async Task<ViabilityRule> CreateAsync(ViabilityRule entity)
     {
+        var viabilityRules = await _context.ViabilityRules.Where(
+            vr => vr.CompanyId == entity.CompanyId && vr.FeasibilityTypeId != entity.FeasibilityTypeId && vr.IsActive == true)
+            .ToListAsync();
+
+        if (viabilityRules.Count > 0) throw new InternalErrorException("Sua empresa já tem uma regra estabelecida pra a consulta dos planos, inative essa configuração para poder adicionar outra.");
+        
         await _context.ViabilityRules.AddAsync(entity);
         await _context.SaveChangesAsync();
         return entity;
@@ -18,7 +25,7 @@ public class ViabilityRuleRepositoryImpl(AppDbContext context) : IViabilityRuleR
     
     public async Task<IEnumerable<ViabilityRule>> GetByCityAndState(string city, string state, Guid companyId)
     {
-        return await _context.ViabilityRules
+        var viabilityrules = await _context.ViabilityRules
             .Include(vr => vr.Plan)
             .Include(vr => vr.Plan.Internet)
             .Include(vr => vr.FeasibilityType)
@@ -32,11 +39,15 @@ public class ViabilityRuleRepositoryImpl(AppDbContext context) : IViabilityRuleR
                          && vr.ViabilityCities.Any(vc => vc.Address.City.ToUpper().Contains(city.ToUpper()) && vc.Address.State.Uf.ToUpper() == state.ToUpper())
                          && vr.IsActive == true)
             .ToListAsync();
+        
+        if (viabilityrules.Count == 0) throw new NotFoundException("Sua empresa não possuí planos registrados no sistema para essa região.");
+
+        return viabilityrules;
     }
 
     public async Task<IEnumerable<ViabilityRule>> GetByZipCode(string zipCode, Guid companyId)
     {
-        return await _context.ViabilityRules
+        var viabilityrules = await _context.ViabilityRules
             .Include(vr => vr.Plan)
             .Include(vr => vr.Plan.Internet)
             .Include(vr => vr.FeasibilityType)
@@ -50,11 +61,15 @@ public class ViabilityRuleRepositoryImpl(AppDbContext context) : IViabilityRuleR
                          && vr.ViabilityCities.Any(vc => vc.Address.ZipCode.Contains(zipCode))
                          && vr.IsActive == true)
             .ToListAsync();
+        
+        if (viabilityrules.Count == 0) throw new NotFoundException("Sua empresa não possuí planos registrados no sistema para essa região.");
+
+        return viabilityrules;
     }
     
     public async Task<ICollection<ViabilityRule>> GetByCity(string city, Guid companyId)
     {
-        return await _context.ViabilityRules
+        var viabilityrules = await _context.ViabilityRules
             .Include(vr => vr.Plan)
             .Include(vr => vr.Plan.Internet)
             .Include(vr => vr.FeasibilityType)
@@ -68,5 +83,28 @@ public class ViabilityRuleRepositoryImpl(AppDbContext context) : IViabilityRuleR
                          && vr.ViabilityCities.Any(vc => vc.Address.City.ToUpper().Contains(city.ToUpper()))
                          && vr.IsActive == true)
             .ToListAsync();
+
+        if (viabilityrules.Count == 0) throw new NotFoundException("Sua empresa não possuí planos registrados no sistema para essa região.");
+
+        return viabilityrules;
+    }
+    
+    public async Task DisableAsync(Guid companyId)
+    {
+        var viabilityRules = await _context.ViabilityRules.Where(vr =>
+                vr.CompanyId == companyId
+                && vr.IsActive == true)
+            .ToListAsync();
+
+        if (viabilityRules.Count == 0) throw new NotFoundException("A sua empresa não possuí nenhuma configuração para a consulta dos planos!");
+        
+        //var viabilityStates = await _context.ViabilityStates.Where(vs => vs.ViabilityRuleId == viabilityRuleId).ToListAsync();
+        //var viabilityCities = await _context.ViabilityCities.Where(vc => vc.ViabilityRuleId == viabilityRuleId).ToListAsync();
+
+        foreach (var viabilityRule in viabilityRules)
+        {
+            viabilityRule.Disable();
+            await _context.SaveChangesAsync();
+        }
     }
 }

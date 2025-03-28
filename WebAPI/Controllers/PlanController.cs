@@ -92,4 +92,18 @@ public class PlanController(IPlanService service, IReadCvsUtil csv) : Controller
 
         return Unauthorized("Token invalido ou inexistente!");
     }
+
+    [HttpDelete("disable")]
+    public async Task<IActionResult> DisabePlansAsync()
+    {
+        if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))
+        {
+            var companyId = (Guid)companyGuid;
+            await _service.DisablePlansAsync(companyId);
+        
+            return NoContent();
+        } 
+        
+        return Unauthorized("Token invalido ou inexistente!");
+    }
 }
