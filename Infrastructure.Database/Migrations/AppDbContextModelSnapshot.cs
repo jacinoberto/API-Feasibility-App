@@ -356,6 +356,12 @@ namespace Infrastructure.Migrations
                         .HasColumnType("char(36)")
                         .HasColumnName("address_id");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
                     b.Property<Guid>("ViabilityRuleId")
                         .HasColumnType("char(36)")
                         .HasColumnName("viability_rule_id");
@@ -411,6 +417,12 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
                         .HasColumnName("id_viability_state");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<Guid>("StateId")
                         .HasColumnType("char(36)")

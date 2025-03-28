@@ -100,15 +100,27 @@ public class ViabilityRuleRepositoryImpl(AppDbContext context) : IViabilityRuleR
 
         if (viabilityRules.Count == 0) throw new NotFoundException("A sua empresa não possuí nenhuma configuração para a consulta dos planos!");
         
-        //var viabilityStates = await _context.ViabilityStates.Where(vs => vs.ViabilityRuleId == viabilityRuleId).ToListAsync();
-        //var viabilityCities = await _context.ViabilityCities.Where(vc => vc.ViabilityRuleId == viabilityRuleId).ToListAsync();
-
         foreach (var viabilityRule in viabilityRules)
         {
             foreach (var planId in plansId)
             {
                 var plan = await _context.Plans.FindAsync(planId);
                 plan.DeactivatePlan();
+                await _context.SaveChangesAsync();
+            }
+            
+            var viabilityState = await _context.ViabilityStates.Where(vs => vs.ViabilityRuleId == viabilityRule.Id).FirstOrDefaultAsync();
+            var viabilityCity = await _context.ViabilityCities.Where(vc => vc.ViabilityRuleId == viabilityRule.Id).FirstOrDefaultAsync();
+
+            if (viabilityState is not null)
+            {
+                viabilityState.Disable();
+                await _context.SaveChangesAsync();
+            }
+            
+            if (viabilityCity is not null)
+            {
+                viabilityCity.Disable();
                 await _context.SaveChangesAsync();
             }
             

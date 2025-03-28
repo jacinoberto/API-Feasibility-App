@@ -5,7 +5,7 @@
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InsertTablesStateAndFeabilityType : Migration
+    public partial class InsertTablesStateAndFeasibilityType : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

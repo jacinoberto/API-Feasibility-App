@@ -27,6 +27,12 @@ public class ViabilityCityConfiguration : IEntityTypeConfiguration<ViabilityCity
         builder.Property(vc => vc.AddressId)
             .HasColumnName("address_id")
             .IsRequired();
+
+        builder.Property(vc => vc.IsActive)
+            .HasColumnName("is_active")
+            .HasColumnType("tinyint(1)")
+            .HasDefaultValue(true)
+            .IsRequired();
         
         /*__Index__*/
         builder.HasIndex(vc =>

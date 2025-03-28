@@ -1,5 +1,6 @@
 ﻿using Application.CQRS.AddressCQRS.Commands;
 using Application.CQRS.AddressCQRS.Queries;
+using Application.CQRS.CompanyOperatorCQRS.Queries;
 using Application.CQRS.FeasibilityCQRS.Commands;
 using Application.CQRS.FeasibilityCQRS.Queries;
 using Application.CQRS.OperatorCQRS.Commands;
@@ -18,12 +19,12 @@ public class FeasibilityServiceImpl(IMediator mediator) : IFeasibilityService
     
     public async Task CreateAsync(CreateFeasibilityDto dto)
     {
-        var operatorExist = await _mediator.Send(new ReturnOperatorByNameQuery(dto.Operator));
+        var operatorExist = await _mediator.Send(new ReturnOperatorByNameQuery(dto.Operator)) ?? null;
         var state = await _mediator.Send(new ReturnStateByUfQuery(dto.State));
-        var address = await _mediator.Send(new ReturnAddressByParametersQuery(dto.ZipCode, dto.City, dto.State));
+        // address = await _mediator.Send(new ReturnAddressByParametersQuery(dto.ZipCode, dto.City, dto.State)) ?? null;
 
         if (operatorExist is null) operatorExist = await _mediator.Send(new CreateOperatorCommand(dto.Operator));
-        if (address is null) address = await _mediator.Send(new CreateAddressCommand(state.Id, dto.ZipCode, dto.Street,
+        var address = await _mediator.Send(new CreateAddressCommand(state.Id, dto.ZipCode, dto.Street,
             dto.Number, dto.Area, dto.City));
 
         Console.WriteLine(operatorExist.Id + "," + address.Id);
@@ -43,6 +44,9 @@ public class FeasibilityServiceImpl(IMediator mediator) : IFeasibilityService
     
     public async Task<IEnumerable<ReturnFeasibilityDto>> GetByCityAndStateAsync(string city, string state, Guid companyId, Guid operatorId)
     {
+        if (!await _mediator.Send(new ReturnCompanyOperatorQuery(companyId, operatorId)))
+            throw new InternalErrorException("Sua empresa não tem definido em quais estados checar a viabilidade.");
+        
         if (await _mediator.Send(new ReturnFeasibilityByCityAndStateQuery(city, state, companyId, operatorId)))
         {
             var viabilityRules = await _mediator.Send(new ReturnViabilityRuleByCityAndStateQuery(city, state, companyId));

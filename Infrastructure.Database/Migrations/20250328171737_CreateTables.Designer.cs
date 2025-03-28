@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250326194442_CreateTables")]
+    [Migration("20250328171737_CreateTables")]
     partial class CreateTables
     {
         /// <inheritdoc />
@@ -270,30 +270,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("tb_operators", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.OperatorPlan", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasColumnName("id_operator_plan");
-
-                    b.Property<Guid>("OperatorId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("operator_id");
-
-                    b.Property<Guid>("PlanId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("plan_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OperatorId");
-
-                    b.HasIndex("PlanId");
-
-                    b.ToTable("tb_operators_plans", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Entities.Plan", b =>
                 {
                     b.Property<Guid>("Id")
@@ -326,43 +302,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("InternetId");
 
                     b.ToTable("tb_plans", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Entities.PlanFeasibility", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .HasColumnName("id_plan_feasibility");
-
-                    b.Property<Guid>("FeasibilityId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("feasibility_type_id");
-
-                    b.Property<Guid>("FeasibilityTypeId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<Guid?>("OperatorPlanId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("PlanId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("feasibility_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FeasibilityId");
-
-                    b.HasIndex("FeasibilityTypeId");
-
-                    b.HasIndex("OperatorPlanId");
-
-                    b.HasIndex("PlanId");
-
-                    b.ToTable("tb_plans_feasibility", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.RegionConsultation", b =>
@@ -420,6 +359,12 @@ namespace Infrastructure.Migrations
                         .HasColumnType("char(36)")
                         .HasColumnName("address_id");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
+
                     b.Property<Guid>("ViabilityRuleId")
                         .HasColumnType("char(36)")
                         .HasColumnName("viability_rule_id");
@@ -475,6 +420,12 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
                         .HasColumnName("id_viability_state");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<Guid>("StateId")
                         .HasColumnType("char(36)")
@@ -552,25 +503,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Operator");
                 });
 
-            modelBuilder.Entity("Domain.Entities.OperatorPlan", b =>
-                {
-                    b.HasOne("Domain.Entities.Operator", "Operator")
-                        .WithMany()
-                        .HasForeignKey("OperatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Plan", "Plan")
-                        .WithMany()
-                        .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Operator");
-
-                    b.Navigation("Plan");
-                });
-
             modelBuilder.Entity("Domain.Entities.Plan", b =>
                 {
                     b.HasOne("Domain.Entities.Internet", "Internet")
@@ -580,37 +512,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Internet");
-                });
-
-            modelBuilder.Entity("Domain.Entities.PlanFeasibility", b =>
-                {
-                    b.HasOne("Domain.Entities.Feasibility", "Feasibility")
-                        .WithMany("PlanFeasibilities")
-                        .HasForeignKey("FeasibilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.FeasibilityType", "FeasibilityType")
-                        .WithMany("PlanFeasibilities")
-                        .HasForeignKey("FeasibilityTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.OperatorPlan", null)
-                        .WithMany("PlanFeasibility")
-                        .HasForeignKey("OperatorPlanId");
-
-                    b.HasOne("Domain.Entities.Plan", "Plan")
-                        .WithMany("PlanFeasibilities")
-                        .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Feasibility");
-
-                    b.Navigation("FeasibilityType");
-
-                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("Domain.Entities.RegionConsultation", b =>
@@ -715,15 +616,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("ViabilityRules");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Feasibility", b =>
-                {
-                    b.Navigation("PlanFeasibilities");
-                });
-
             modelBuilder.Entity("Domain.Entities.FeasibilityType", b =>
                 {
-                    b.Navigation("PlanFeasibilities");
-
                     b.Navigation("ViabilityRules");
                 });
 
@@ -739,15 +633,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Feasibilities");
                 });
 
-            modelBuilder.Entity("Domain.Entities.OperatorPlan", b =>
-                {
-                    b.Navigation("PlanFeasibility");
-                });
-
             modelBuilder.Entity("Domain.Entities.Plan", b =>
                 {
-                    b.Navigation("PlanFeasibilities");
-
                     b.Navigation("ViabilityRules");
                 });
 

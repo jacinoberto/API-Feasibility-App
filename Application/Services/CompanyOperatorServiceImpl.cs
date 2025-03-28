@@ -18,7 +18,7 @@ public class CompanyOperatorServiceImpl(IMediator mediator) : ICompanyOperatorSe
 
     public async Task<IEnumerable<ReturnCompanyOperatorDto>> GetByCompanyIdAsync(Guid companyId)
     {
-        var list = await _mediator.Send(new ReturnCompanyOperatorByCompanyIdQuery(companyId));
+        var list = await _mediator.Send(new ReturnAllCompanyOperatorByCompanyIdQuery(companyId));
         return list.Select(co => CompanyOperatorMapper.MapToReturnCompanyOperatorDto(co)).ToList();
     }
 }

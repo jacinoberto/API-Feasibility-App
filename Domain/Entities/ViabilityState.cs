@@ -5,6 +5,7 @@ public class ViabilityState
     public Guid Id { get; init; }
     public Guid ViabilityRuleId { get; init; }
     public Guid StateId { get; init; }
+    public bool IsActive { get; private set; }
     
     /*__Relationships__*/
     public ViabilityRule ViabilityRule { get; set; }
@@ -16,5 +17,11 @@ public class ViabilityState
     {
         ViabilityRuleId = viabilityRuleId;
         StateId = stateId;
+        IsActive = true;
+    }
+
+    public void Disable()
+    {
+        IsActive = false;
     }
 }

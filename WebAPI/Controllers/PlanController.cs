@@ -16,12 +16,12 @@ public class PlanController(IPlanService service, IReadCvsUtil csv) : Controller
     private readonly IPlanService _service = service;
     private readonly IReadCvsUtil _csv = csv;
 
-    [HttpPost("create")]
-    public async Task<IActionResult> CreatePlanAsync([FromBody] CreatePlanDto dto)
-    {
-        await _service.CreatePlan(dto);
-        return StatusCode(201);
-    }
+    //[HttpPost("create")]
+    //public async Task<IActionResult> CreatePlanAsync([FromBody] CreatePlanDto dto)
+    //{
+    //    await _service.CreatePlan(dto);
+    //    return StatusCode(201);
+    //}
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetPlanByIdAsync(Guid id)

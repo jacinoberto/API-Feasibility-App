@@ -28,6 +28,12 @@ public class ViabilityStateConfiguration : IEntityTypeConfiguration<ViabilitySta
             .HasColumnName("state_id")
             .IsRequired();
         
+        builder.Property(vs => vs.IsActive)
+            .HasColumnName("is_active")
+            .HasColumnType("tinyint(1)")
+            .HasDefaultValue(true)
+            .IsRequired();
+        
         /*__Index__*/
         builder.HasIndex(vs =>
             new { vs.ViabilityRuleId, vs.StateId});

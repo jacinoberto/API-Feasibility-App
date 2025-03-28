@@ -16,7 +16,7 @@ public class CompanyOperatorRepositoryImpl(AppDbContext context) : ICompanyOpera
         await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<CompanyOperator>> GetByCompanyIdAsync(Guid companyId)
+    public async Task<IEnumerable<CompanyOperator>> GetAllByCompanyIdAsync(Guid companyId)
     {
         return await _context.CompanyOperators
                    .Include(c => c.Operator)
@@ -24,5 +24,13 @@ public class CompanyOperatorRepositoryImpl(AppDbContext context) : ICompanyOpera
                    .Where(c => c.CompanyId == companyId)
                    .ToListAsync()
                ?? throw new NotFoundException("Não foi encontrada nenhuma operadora vinculada a essa empresa.");
+    }
+
+    public async Task<bool> CheckByCompanyIdAsync(Guid companyId, Guid operatorId)
+    {
+        return await _context.CompanyOperators
+            .Where(cp => cp.CompanyId == companyId)
+            .Select(cp => cp.OperatorId)
+            .AnyAsync(id => id == operatorId);
     }
 }

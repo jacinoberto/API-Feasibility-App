@@ -208,32 +208,6 @@ namespace Infrastructure.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "tb_operators_plans",
-                columns: table => new
-                {
-                    id_operator_plan = table.Column<Guid>(type: "char(36)", nullable: false),
-                    operator_id = table.Column<Guid>(type: "char(36)", nullable: false),
-                    plan_id = table.Column<Guid>(type: "char(36)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tb_operators_plans", x => x.id_operator_plan);
-                    table.ForeignKey(
-                        name: "FK_tb_operators_plans_tb_operators_operator_id",
-                        column: x => x.operator_id,
-                        principalTable: "tb_operators",
-                        principalColumn: "id_operator",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_tb_operators_plans_tb_plans_plan_id",
-                        column: x => x.plan_id,
-                        principalTable: "tb_plans",
-                        principalColumn: "id_plan",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "tb_viability_rules",
                 columns: table => new
                 {
@@ -299,7 +273,8 @@ namespace Infrastructure.Migrations
                 {
                     id_viability_city = table.Column<Guid>(type: "char(36)", nullable: false),
                     viability_rule_id = table.Column<Guid>(type: "char(36)", nullable: false),
-                    address_id = table.Column<Guid>(type: "char(36)", nullable: false)
+                    address_id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    is_active = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
@@ -325,7 +300,8 @@ namespace Infrastructure.Migrations
                 {
                     id_viability_state = table.Column<Guid>(type: "char(36)", nullable: false),
                     viability_rule_id = table.Column<Guid>(type: "char(36)", nullable: false),
-                    state_id = table.Column<Guid>(type: "char(36)", nullable: false)
+                    state_id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    is_active = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
@@ -341,46 +317,6 @@ namespace Infrastructure.Migrations
                         column: x => x.viability_rule_id,
                         principalTable: "tb_viability_rules",
                         principalColumn: "id_viability_rule",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "tb_plans_feasibility",
-                columns: table => new
-                {
-                    id_plan_feasibility = table.Column<Guid>(type: "char(36)", nullable: false),
-                    feasibility_id = table.Column<Guid>(type: "char(36)", nullable: false),
-                    feasibility_type_id = table.Column<Guid>(type: "char(36)", nullable: false),
-                    FeasibilityTypeId = table.Column<Guid>(type: "char(36)", nullable: false),
-                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    OperatorPlanId = table.Column<Guid>(type: "char(36)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tb_plans_feasibility", x => x.id_plan_feasibility);
-                    table.ForeignKey(
-                        name: "FK_tb_plans_feasibility_tb_feasibilities_feasibility_type_id",
-                        column: x => x.feasibility_type_id,
-                        principalTable: "tb_feasibilities",
-                        principalColumn: "id_feasibility",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_tb_plans_feasibility_tb_feasibility_types_FeasibilityTypeId",
-                        column: x => x.FeasibilityTypeId,
-                        principalTable: "tb_feasibility_types",
-                        principalColumn: "id_feasibility_type",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_tb_plans_feasibility_tb_operators_plans_OperatorPlanId",
-                        column: x => x.OperatorPlanId,
-                        principalTable: "tb_operators_plans",
-                        principalColumn: "id_operator_plan");
-                    table.ForeignKey(
-                        name: "FK_tb_plans_feasibility_tb_plans_feasibility_id",
-                        column: x => x.feasibility_id,
-                        principalTable: "tb_plans",
-                        principalColumn: "id_plan",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
@@ -432,39 +368,9 @@ namespace Infrastructure.Migrations
                 column: "operator_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tb_operators_plans_operator_id",
-                table: "tb_operators_plans",
-                column: "operator_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tb_operators_plans_plan_id",
-                table: "tb_operators_plans",
-                column: "plan_id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_tb_plans_internet_id",
                 table: "tb_plans",
                 column: "internet_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tb_plans_feasibility_feasibility_id",
-                table: "tb_plans_feasibility",
-                column: "feasibility_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tb_plans_feasibility_feasibility_type_id",
-                table: "tb_plans_feasibility",
-                column: "feasibility_type_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tb_plans_feasibility_FeasibilityTypeId",
-                table: "tb_plans_feasibility",
-                column: "FeasibilityTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tb_plans_feasibility_OperatorPlanId",
-                table: "tb_plans_feasibility",
-                column: "OperatorPlanId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tb_region_consultations_company_id",
@@ -527,7 +433,7 @@ namespace Infrastructure.Migrations
                 name: "tb_companies_operators");
 
             migrationBuilder.DropTable(
-                name: "tb_plans_feasibility");
+                name: "tb_feasibilities");
 
             migrationBuilder.DropTable(
                 name: "tb_region_consultations");
@@ -539,19 +445,16 @@ namespace Infrastructure.Migrations
                 name: "tb_viability_states");
 
             migrationBuilder.DropTable(
-                name: "tb_feasibilities");
-
-            migrationBuilder.DropTable(
-                name: "tb_operators_plans");
-
-            migrationBuilder.DropTable(
-                name: "tb_viability_rules");
+                name: "tb_operators");
 
             migrationBuilder.DropTable(
                 name: "tb_addresses");
 
             migrationBuilder.DropTable(
-                name: "tb_operators");
+                name: "tb_viability_rules");
+
+            migrationBuilder.DropTable(
+                name: "tb_states");
 
             migrationBuilder.DropTable(
                 name: "tb_companies");
@@ -561,9 +464,6 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "tb_plans");
-
-            migrationBuilder.DropTable(
-                name: "tb_states");
 
             migrationBuilder.DropTable(
                 name: "tb_internets");

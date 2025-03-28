@@ -28,7 +28,7 @@ public class CompanyOperatorController(ICompanyOperatorService service) : Contro
     /// </summary>
     /// <param name="companyId"></param>
     /// <returns></returns>
-    [HttpGet("by-company-id")]
+    [HttpGet()]
     public async Task<IActionResult> GetByCompanyIdAsync()
     {
         if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))
