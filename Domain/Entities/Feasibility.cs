@@ -9,7 +9,6 @@ public class Feasibility
     /*__Relationships__*/
     public Operator Operator { get; set; }
     public Address Address { get; set; }
-    public IEnumerable<PlanFeasibility> PlanFeasibilities { get; set; }
     
     private Feasibility() { }
 

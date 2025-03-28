@@ -6,7 +6,6 @@ public class FeasibilityType
     public string Type { get; init; }
     
     /*__Relationships__*/
-    public IEnumerable<PlanFeasibility> PlanFeasibilities { get; set; }
     public IEnumerable<ViabilityRule> ViabilityRules { get; set; }
     
     private FeasibilityType() { }

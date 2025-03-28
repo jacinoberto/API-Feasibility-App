@@ -15,9 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<CompanyOperator> CompanyOperators { get; set; }
     public DbSet<Internet> Internets { get; set; }
     public DbSet<Operator> Operators { get; set; }
-    public DbSet<OperatorPlan> OperatorPlans { get; set; }
     public DbSet<Plan> Plans { get; set; }
-    public DbSet<PlanFeasibility> PlanFeasibilities { get; set; }
     public DbSet<State> States { get; set; }
     
     public DbSet<ViabilityRule> ViabilityRules { get; set; }

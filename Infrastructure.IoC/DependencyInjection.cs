@@ -34,8 +34,6 @@ public static class DependencyInjection
         services.AddScoped<IOperatorRepository, OperatorRepositoryImpl>();
         services.AddScoped<IPlanRepository, PlanRepositoryImpl>();
         services.AddScoped<ICompanyOperatorRepository, CompanyOperatorRepositoryImpl>();
-        services.AddScoped<IOperatorPlanRepository, OperatorPlanRepositoryImpl>();
-        services.AddScoped<IPlanFeasibilityRepository, PlanFeasibilityRepositoryImpl>();
         services.AddScoped<IApiKeyRepository, ApiKeyRepositoryImpl>();
         services.AddScoped<IRegionConsultationRepository, RegionConsultationRepositoryImpl>();
         services.AddScoped<IFeasibilityRepository, FeasibilityRepositoryImpl>();
@@ -51,8 +49,6 @@ public static class DependencyInjection
         services.AddScoped<IOperatorService, OperatorServiceImpl>();
         services.AddScoped<IInternetService, InternetServiceImpl>();
         services.AddScoped<IPlanService, PlanServiceImpl>();
-        services.AddScoped<IOperatorPlanService, OperatorPlanServiceImpl>();
-        services.AddScoped<IPlanFeasibilityService, PlanFeasibilityServiceImpl>();
         services.AddScoped<ICompanyOperatorService, CompanyOperatorServiceImpl>();
         services.AddScoped<IApiKeyService, ApiKeyServiceImpl>();
         services.AddScoped<IRegionConsultationService, RegionConsultationServiceImpl>();
