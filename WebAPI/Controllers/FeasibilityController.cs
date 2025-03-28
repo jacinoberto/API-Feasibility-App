@@ -36,4 +36,49 @@ public class FeasibilityController(IFeasibilityService service, IReadCvsUtil csv
         
         return StatusCode(201);
     }
+    
+    /// <summary>
+    /// Consultar viabilidade através da cidade e estado, informando a qual operadora pertence.
+    /// </summary>
+    /// <param name="city"></param>
+    /// <param name="state"></param>
+    /// <param name="operatorId"></param>
+    /// <returns></returns>
+    [HttpGet("by-city-state")]
+    public async Task<IActionResult> GetByCityAndState([FromQuery] string city, [FromQuery] string state, [FromQuery] Guid operatorId)
+    {
+        if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))
+        {
+            var companyId = (Guid)companyGuid;
+            var results = await _service.GetByCityAndStateAsync(city, state, companyId, operatorId);
+            return Ok(results);
+        }
+
+        return Unauthorized("Token invalido.");
+    }
+
+    [HttpGet("by-zipcode")]
+    public async Task<IActionResult> GetByZipCode([FromQuery] string zipCode, [FromQuery] Guid operatorId)
+    {
+        if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))
+        {
+            var companyId = (Guid)companyGuid;
+            var result = await _service.GetByZipCodeAsync(zipCode, companyId, operatorId);
+            return Ok(result.ToList());
+        }
+
+        return Unauthorized("Token invalido.");
+    }
+    
+    [HttpGet("by-city")]
+    public async Task<IActionResult> GetByCity([FromQuery] string city, [FromQuery] Guid operatorId)
+    {
+        if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))
+        {
+            var companyId = (Guid)companyGuid;
+            return Ok(await _service.GetByCityAsync(city, companyId, operatorId));
+        }
+
+        return Unauthorized("Token invalido.");
+    }
 }
