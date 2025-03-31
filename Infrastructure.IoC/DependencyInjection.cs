@@ -19,8 +19,12 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        var connectionString = Environment.GetEnvironmentVariable("FEASIBILITY_DB_CONNECTION") 
+                               ?? configuration.GetConnectionString("FeasibilityConnection") 
+                               ?? string.Empty;
+        
         services.AddDbContext<AppDbContext>(options =>
-            options.UseMySQL(configuration.GetConnectionString("FeasibilityConnection") ?? string.Empty,
+            options.UseMySQL(connectionString ?? string.Empty,
                 b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
 
         var muHandlers = AppDomain.CurrentDomain.Load("Application");

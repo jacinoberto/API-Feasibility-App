@@ -48,8 +48,6 @@ builder.Services.AddSwaggerGen(swagger =>
     });
 });
 
-
-
 var app = builder.Build();
 
 
@@ -64,7 +62,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseMiddleware<GlobalErrorHandlingMiddleware>();
+//app.UseMiddleware<GlobalErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 

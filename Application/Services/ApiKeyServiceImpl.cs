@@ -18,9 +18,15 @@ public class ApiKeyServiceImpl(IMediator mediator, IConfiguration configuration)
     public async Task<string> CreateApiKeyAsync(Guid companyId)
     {
         var secret = _configuration["JwtSettings:Secret"];
-        Console.WriteLine(secret);
         
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Secret"]));
+        var jwtSecret = Environment.GetEnvironmentVariable("FEASIBILITY_JWT_SECRET")
+                        ?? _configuration["JwtSettings:Secret"]
+                        ?? throw new ArgumentException("A secret JWT está vazia.");
+        
+        Console.WriteLine(secret);
+        if (string.IsNullOrEmpty(jwtSecret))
+            throw new ArgumentException("A secret JWT está vazio.");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
