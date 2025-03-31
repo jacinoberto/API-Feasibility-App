@@ -12,7 +12,7 @@ public class AddressController(IAddressService service) : ControllerBase
     private readonly IAddressService _service = service;
 
     
-    /// <summary>
+    /*/// <summary>
     ///  Cadastrar um novo endereço
     /// </summary>
     /// <param name="Address"></param>
@@ -39,4 +39,20 @@ public class AddressController(IAddressService service) : ControllerBase
         return Ok(await _service.GetAddressByIdAsync(id));
     }
 
+    /// <summary>
+    /// Retorna todas as cidades de um determinado estado
+    /// </summary>
+    /// <param name="state">Estado/UF</param>
+    /// <returns>IActionResult</returns>
+    /// <response code="200">Se a consulta for realizada com sucesso.</response>
+    /// <response code="404">Caso não seja encontrada nenhuma cidade para o estado informado.</response>
+    /// <response code="401">Caso o usuário não tenha sido autenticado.</response>
+    [HttpGet("cities")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetByStateAsync(string state)
+    {
+        return Ok(_service.GetCitiesAsync(state));
+    }*/
 }

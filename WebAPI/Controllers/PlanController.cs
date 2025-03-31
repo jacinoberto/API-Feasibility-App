@@ -16,12 +16,12 @@ public class PlanController(IPlanService service, IReadCvsUtil csv) : Controller
     private readonly IPlanService _service = service;
     private readonly IReadCvsUtil _csv = csv;
 
-    //[HttpPost("create")]
-    //public async Task<IActionResult> CreatePlanAsync([FromBody] CreatePlanDto dto)
-    //{
-    //    await _service.CreatePlan(dto);
-    //    return StatusCode(201);
-    //}
+    /*[HttpPost("create")]
+    public async Task<IActionResult> CreatePlanAsync([FromBody] CreatePlanDto dto)
+    {
+        await _service.CreatePlan(dto);
+       return StatusCode(201);
+    }
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetPlanByIdAsync(Guid id)
@@ -33,16 +33,22 @@ public class PlanController(IPlanService service, IReadCvsUtil csv) : Controller
     public async Task<IActionResult> GetAllPlansAsync()
     {
         return Ok(await _service.GetAllPlansAsync());
-    }
+    }*/
     
     /// <summary>
     /// Upload do arquivo CSV dos planos ofertados pela empresa por estado. Os campos necessários no CSV são: Plano,
     /// Internet/Velocidade, Internet/Tipo de Velocidade, Valor e Estado/UF.
     /// </summary>
-    /// <param name="file"></param>
-    /// <param name="feasibilityTypeId"></param>
+    /// <param name="file">Arquivo CSV</param>
+    /// <param name="feasibilityTypeId">Identificação do Tipo de Viabilidade</param>
     /// <returns>IActionResult</returns>
+    /// <response code="201">Se o upload do arquivo for realizado com sucesso.</response>
+    /// <response code="400">Caso o arquivo esteja vazio ou com algum dado invalido.</response>
+    /// <response code="401">Se o usuário não for autenticado.</response>
     [HttpPost("upload/state")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UploadPlanByStateAsync([FromForm] ReceiverCsv file, [FromQuery] Guid feasibilityTypeId)
     {
         if (file.File == null || file.File.Length == 0)
@@ -68,10 +74,16 @@ public class PlanController(IPlanService service, IReadCvsUtil csv) : Controller
     /// Upload do arquivo CSV dos planos ofertados pela empresa por cidade. Os campos necessários no CSV são: Plano,
     /// Internet/Velocidade, Internet/Tipo de Velocidade, Valor, Cidade e Estado/UF.
     /// </summary>
-    /// <param name="file"></param>
-    /// <param name="feasibilityTypeId"></param>
+    /// <param name="file">Arquivo CSV</param>
+    /// <param name="feasibilityTypeId">Identificador do Tipo de Viabilidade</param>
     /// <returns>IActionResult</returns>
+    /// <response code="201">Se o upload do arquivo for realizado com sucesso.</response>
+    /// <response code="400">Caso o arquivo esteja vazio ou com algum dado invalido.</response>
+    /// <response code="401">Se o usuário não for autenticado.</response>
     [HttpPost("upload/city")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> UploadPlanByCityAsync([FromForm] ReceiverCsv file, [FromQuery] Guid feasibilityTypeId)
     {
         if (file.File == null || file.File.Length == 0)
@@ -93,7 +105,15 @@ public class PlanController(IPlanService service, IReadCvsUtil csv) : Controller
         return Unauthorized("Token invalido ou inexistente!");
     }
 
+    /// <summary>
+    /// Apaga/Desabilita todos os planos de um deteminada empresa.
+    /// </summary>
+    /// <returns>IActionResult</returns>
+    /// <response code="204">Se os planos forem desabilitados com sucesso.</response>
+    /// <response code="401">Se o usuário não for autenticado.</response>
     [HttpDelete("disable")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> DisabePlansAsync()
     {
         if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))

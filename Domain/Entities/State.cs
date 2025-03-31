@@ -1,4 +1,5 @@
-﻿using Domain.Utils.Validations;
+﻿using System.Text.Json.Serialization;
+using Domain.Utils.Validations;
 using InvalidDataException = Domain.Exceptions.InvalidDataException;
 
 namespace Domain.Entities;
@@ -9,6 +10,7 @@ public class State
     public string Uf { get; init; }
     
     /*__Relationships__*/
+    [JsonIgnore]
     public IEnumerable<Address> Addresses { get; set; }
     public IEnumerable<RegionConsultation> RegionConsultations { get; set; }
     public IEnumerable<ViabilityState> ViabilityStates { get; set; }

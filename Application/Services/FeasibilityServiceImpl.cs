@@ -45,7 +45,7 @@ public class FeasibilityServiceImpl(IMediator mediator) : IFeasibilityService
     public async Task<IEnumerable<ReturnFeasibilityDto>> GetByCityAndStateAsync(string city, string state, Guid companyId, Guid operatorId)
     {
         if (!await _mediator.Send(new ReturnCompanyOperatorQuery(companyId, operatorId)))
-            throw new InternalErrorException("Sua empresa não tem definido em quais estados checar a viabilidade.");
+            throw new InternalErrorException("Sua empresa não foi vinculada a uma operadora.");
         
         if (await _mediator.Send(new ReturnFeasibilityByCityAndStateQuery(city, state, companyId, operatorId)))
         {

@@ -24,4 +24,11 @@ public class AddressServiceImpl(IMediator mediator, ITextFormattingUtil formatti
         return AddressMapper.MapToReturnAddressDto(
             await _mediator.Send(new ReturnAddressByIdQuery(id)));
     }
+
+    public async Task<IEnumerable<ReturnCitiesDto>> GetCitiesAsync(string state)
+    {
+        var cities = await _mediator.Send(new ReturnAddressesByStateQuery(state));
+        
+        return cities.Select(c => AddressMapper.MapToReturnCitiesDto(c)).ToList();
+    }
 }

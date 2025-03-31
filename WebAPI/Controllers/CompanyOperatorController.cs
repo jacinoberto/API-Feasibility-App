@@ -14,9 +14,15 @@ public class CompanyOperatorController(ICompanyOperatorService service) : Contro
     /// <summary>
     /// Vincula uma empresa a uma operadora.
     /// </summary>
-    /// <param name="dto"></param>
-    /// <returns></returns>
+    /// <param name="dto">Dados para vínculo.</param>
+    /// <returns>IActionResult</returns>
+    /// <response code="201">Se o cadastro seja realizado com sucesso.</response>
+    /// <response code="404">Caso não seja encontrado nenhum dos parãmetos informados.</response>
+    /// <response code="401">Se o usuário não for autenticado.</response>
     [HttpPost("create")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> CreateAsync(CreateCompanyOperatorDto dto)
     {
         await _service.CreateAsync(dto);
@@ -27,8 +33,14 @@ public class CompanyOperatorController(ICompanyOperatorService service) : Contro
     /// Retorna todas as operadoras vinculadas a empresa que teve o ID informado.
     /// </summary>
     /// <param name="companyId"></param>
-    /// <returns></returns>
+    /// <returns>IActionResult</returns>
+    /// <response code="200">Se a consulta for realizada com sucesso.</response>
+    /// <response code="404">Caso não seja encontrada nenhuma empresa com o ID informado.</response>
+    /// <response code="401">Se o usuário não for autenticado.</response>
     [HttpGet()]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetByCompanyIdAsync()
     {
         if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))

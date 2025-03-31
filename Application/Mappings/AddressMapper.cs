@@ -15,4 +15,9 @@ public static class AddressMapper
         return new ReturnAddressDto(address.Id, address.ZipCode, address.Street, address.Number, address.Area,
             address.City, address.State?.Uf);
     }
+
+    public static ReturnCitiesDto MapToReturnCitiesDto(Address address)
+    {
+        return new ReturnCitiesDto(address.Id, address.City);
+    }
 }

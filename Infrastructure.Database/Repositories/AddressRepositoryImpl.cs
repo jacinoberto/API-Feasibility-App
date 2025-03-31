@@ -40,4 +40,11 @@ public class AddressRepositoryImpl(AppDbContext context) : IAddressRepository
             || a.City.ToUpper().Contains(city.ToUpper())
             || a.State.Uf.ToUpper().Contains(state.ToUpper()));
     }
+
+    public async Task<IEnumerable<Address>> GetByStateAsync(string state)
+    {
+        return await _context.Addresses
+            .Where(a => a.State.Uf == state)
+            .ToListAsync();
+    }
 }

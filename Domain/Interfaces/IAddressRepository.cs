@@ -8,4 +8,5 @@ public interface IAddressRepository
     Task<Address> GetByIdAsync(Guid id);
     Task<Address> GetByCityAndStateAsync(string city, string state);
     Task<Address> GetByParameters(string? zipCode, string? city, string? state);
+    Task<IEnumerable<Address>> GetByStateAsync(string state);
 }
