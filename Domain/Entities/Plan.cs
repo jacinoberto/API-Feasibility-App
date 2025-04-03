@@ -6,13 +6,14 @@ public class Plan
 {
     public Guid Id { get; init; }
     public Guid InternetId { get; init; }
-    public string PlanName { get; init; }
+    public string PlanName { get; private set; }
     public decimal Value { get; private set; }
     public bool IsActive { get; private set; }
     
     /*__Relationships__*/
     public Internet Internet { get; set; }
     public IEnumerable<ViabilityRule> ViabilityRules { get; set; }
+    public IEnumerable<PlanObservation> PlanObservations { get; set; }
     
     private Plan(){}
 

@@ -17,19 +17,13 @@ public class AppDbContext : DbContext
     public DbSet<Operator> Operators { get; set; }
     public DbSet<Plan> Plans { get; set; }
     public DbSet<State> States { get; set; }
-    
     public DbSet<ViabilityRule> ViabilityRules { get; set; }
-    
     public DbSet<ViabilityState> ViabilityStates { get; set; }
-    
     public DbSet<ViabilityCity> ViabilityCities { get; set; }
-    
-    
-    
+    public DbSet<Observation> Observations { get; set; }
+    public DbSet<PlanObservation> PlanObservations { get; set; }
     public DbSet<FeasibilityType> FeasibilityTypes { get; set; }
-    
     public DbSet<Feasibility> Feasibilities { get; set; }
-    
     public DbSet<RegionConsultation> RegionConsultations { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
