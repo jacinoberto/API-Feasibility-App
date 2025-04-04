@@ -5,9 +5,12 @@ using Application.CQRS.FeasibilityCQRS.Commands;
 using Application.CQRS.FeasibilityCQRS.Queries;
 using Application.CQRS.OperatorCQRS.Commands;
 using Application.CQRS.OperatorCQRS.Queries;
+using Application.CQRS.PlanObservationCQRS.Queries;
 using Application.CQRS.StateCQRS.Queries;
 using Application.CQRS.ViabilityRuleCQRS.Queries;
 using Application.DTOs.FeasibilityDTO;
+using Application.DTOs.ObservationDTO;
+using Domain.Entities;
 using Domain.Exceptions;
 using MediatR;
 
@@ -46,24 +49,47 @@ public class FeasibilityServiceImpl(IMediator mediator) : IFeasibilityService
     {
         if (!await _mediator.Send(new ReturnCompanyOperatorQuery(companyId, operatorId)))
             throw new InternalErrorException("Sua empresa não foi vinculada a uma operadora.");
+
+        ICollection<ReturnFeasibilityDto> dtos = [];
         
         if (await _mediator.Send(new ReturnFeasibilityByCityAndStateQuery(city, state, companyId, operatorId)))
         {
             var viabilityRules = await _mediator.Send(new ReturnViabilityRuleByCityAndStateQuery(city, state, companyId));
-            return viabilityRules.Select(v => new ReturnFeasibilityDto(v.Id, v.Plan.PlanName, 
-                v.Plan.Internet.InternetSpeed + " " + v.Plan.Internet.SpeedType, v.Plan.Value));
+
+            foreach (var vr in viabilityRules)
+            {
+                var observations = await _mediator.Send(new ReturnPlanObservationByPlanIdQuery(vr.PlanId));
+                var observationDto = observations.Select(
+                    o => new ReturnObservationDto(o.Id, o.Observation.PlanObservation)).ToList();
+
+                dtos.Add(new ReturnFeasibilityDto(vr.Id, vr.Plan.PlanName, vr.Plan.Internet.InternetSpeed + " " + vr.Plan.Internet.SpeedType,
+                    vr.Plan.Value, observationDto));
+            }
+
+            return dtos;
         }
 
         throw new NotFoundException("Não há viabilidade");
     }
     
-    public async Task<IList<ReturnFeasibilityDto>> GetByZipCodeAsync(string zipCode, Guid companyId, Guid operatorId)
+    public async Task<IEnumerable<ReturnFeasibilityDto>> GetByZipCodeAsync(string zipCode, Guid companyId, Guid operatorId)
     {
         if (await _mediator.Send(new ReturnFeasibilityByZipCodeQuery(zipCode, companyId, operatorId)))
         {
             var viabilityRules = await _mediator.Send(new ReturnViabilityRuleByZipCodeQuery(zipCode, companyId));
-            return viabilityRules.Select(v => new ReturnFeasibilityDto(v.Id, v.Plan.PlanName, 
-                v.Plan.Internet.InternetSpeed + " " + v.Plan.Internet.SpeedType, v.Plan.Value)).ToList();
+            
+            ICollection<ReturnFeasibilityDto> dtos = [];
+            foreach (var vr in viabilityRules)
+            {
+                var observations = await _mediator.Send(new ReturnPlanObservationByPlanIdQuery(vr.PlanId));
+                var observationDto = observations.Select(
+                    o => new ReturnObservationDto(o.Id, o.Observation.PlanObservation)).ToList();
+
+                dtos.Add(new ReturnFeasibilityDto(vr.Id, vr.Plan.PlanName, vr.Plan.Internet.InternetSpeed + " " + vr.Plan.Internet.SpeedType,
+                    vr.Plan.Value, observationDto));
+            }
+
+            return dtos;
         }
 
         throw new NotFoundException("Não há viabilidade");
@@ -74,8 +100,19 @@ public class FeasibilityServiceImpl(IMediator mediator) : IFeasibilityService
         if (await _mediator.Send(new ReturnFeasibilityByCityQuery(city, companyId, operatorId)))
         {
             var viabilityRules = await _mediator.Send(new ReturnViabilityRuleByCityQuery(city, companyId));
-            return viabilityRules.Select(v => new ReturnFeasibilityDto(v.Id, v.Plan.PlanName, 
-                v.Plan.Internet.InternetSpeed + " " + v.Plan.Internet.SpeedType, v.Plan.Value)).ToList();
+            
+            ICollection<ReturnFeasibilityDto> dtos = [];
+            foreach (var vr in viabilityRules)
+            {
+                var observations = await _mediator.Send(new ReturnPlanObservationByPlanIdQuery(vr.PlanId));
+                var observationDto = observations.Select(
+                    o => new ReturnObservationDto(o.Id, o.Observation.PlanObservation)).ToList();
+
+                dtos.Add(new ReturnFeasibilityDto(vr.Id, vr.Plan.PlanName, vr.Plan.Internet.InternetSpeed + " " + vr.Plan.Internet.SpeedType,
+                    vr.Plan.Value, observationDto));
+            }
+
+            return dtos;
         }
 
         throw new NotFoundException("Não há viabilidade");

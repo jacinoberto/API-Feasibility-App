@@ -3,5 +3,6 @@
 public record CreatePlanDto(
     Guid InternetId,
     string PlanName,
-    decimal Value
+    decimal Value,
+    string Observations
     );

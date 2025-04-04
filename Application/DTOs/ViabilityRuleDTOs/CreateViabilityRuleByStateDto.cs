@@ -5,6 +5,7 @@ public record CreateViabilityRuleByStateDto(
     int InternetSpeed,
     string SpeedType,
     decimal Value,
+    string? Obervations,
     string State,
     Guid CompanyId,
     Guid FeasibilityTypeId

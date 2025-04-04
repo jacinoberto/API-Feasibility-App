@@ -2,6 +2,7 @@
 using Application.DTOs.PlanDTOs;
 using Application.DTOs.ViabilityRuleDTOs;
 using Application.Interfaces;
+using Application.Utils.Formatting;
 using Application.Utils.ReadCSVs.CSVs;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,11 @@ namespace WebAPI.Controllers;
 
 [Route("api/plan")]
 [ApiController]
-public class PlanController(IPlanService service, IReadCvsUtil csv) : ControllerBase
+public class PlanController(IPlanService service, IReadCvsUtil csv, ITextFormattingUtil text) : ControllerBase
 {
     private readonly IPlanService _service = service;
     private readonly IReadCvsUtil _csv = csv;
+    private readonly ITextFormattingUtil _text = text;
 
     /*[HttpPost("create")]
     public async Task<IActionResult> CreatePlanAsync([FromBody] CreatePlanDto dto)
@@ -37,7 +39,7 @@ public class PlanController(IPlanService service, IReadCvsUtil csv) : Controller
     
     /// <summary>
     /// Upload do arquivo CSV dos planos ofertados pela empresa por estado. Os campos necessários no CSV são: Plano,
-    /// Internet/Velocidade, Internet/Tipo de Velocidade, Valor e Estado/UF.
+    /// Internet/Velocidade, Internet/Tipo de Velocidade, Valor, Observacoes e Estado/UF.
     /// </summary>
     /// <param name="file">Arquivo CSV</param>
     /// <param name="feasibilityTypeId">Identificação do Tipo de Viabilidade</param>
@@ -61,7 +63,7 @@ public class PlanController(IPlanService service, IReadCvsUtil csv) : Controller
         {
             var companyId = (Guid)companyGuid;
             await _service.CreateAllPlanByStateAsync(plans.Select(plan => new CreateViabilityRuleByStateDto(
-                    plan.Plan, plan.InternetSpeed, plan.SpeedType, plan.Value, plan.State, companyId, feasibilityTypeId))
+                    plan.Plan, plan.InternetSpeed, plan.SpeedType, plan.Value, plan.Observations, plan.State, companyId, feasibilityTypeId))
                 .ToList());
         
             return StatusCode(201);

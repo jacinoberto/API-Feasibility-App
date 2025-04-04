@@ -63,7 +63,7 @@ public class ReadCsvUtil : IReadCvsUtil
         csv.ReadHeader();
         int columnCount = csv.HeaderRecord?.Length ?? 0;
 
-        if (columnCount > 5) throw new InvalidDataException("Seu aquivo possuí colunas a mais, é preciso que seja informado apenas o estado além dos dados dos planos");
+        if (columnCount > 6) throw new InvalidDataException("Seu aquivo possuí colunas a mais, é preciso que seja informado apenas o estado além dos dados dos planos");
         
         return csv.GetRecords<PlanByStateCsv>().ToList();
     }
@@ -82,7 +82,7 @@ public class ReadCsvUtil : IReadCvsUtil
         csv.ReadHeader();
         int columnCount = csv.HeaderRecord?.Length ?? 0;
 
-        if (columnCount < 6) throw new InvalidDataException("Seu aquivo possuí colunas a menos, é preciso que seja informado a cidade e o estado além dos dados dos planos.");
+        if (columnCount < 7) throw new InvalidDataException("Seu aquivo possuí colunas a menos, é preciso que seja informado a cidade e o estado além dos dados dos planos.");
         
         return csv.GetRecords<PlanByCityCsv>().ToList();
     }

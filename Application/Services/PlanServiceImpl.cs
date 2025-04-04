@@ -2,8 +2,10 @@
 using Application.CQRS.FeasibilityTypeCQRS.Queries;
 using Application.CQRS.InternetCQRS.Commands;
 using Application.CQRS.InternetCQRS.Queries;
+using Application.CQRS.ObservationCQRS.Commands;
 using Application.CQRS.PlanCQRS.Commands;
 using Application.CQRS.PlanCQRS.Queries;
+using Application.CQRS.PlanObservationCQRS.Commands;
 using Application.CQRS.StateCQRS.Queries;
 using Application.CQRS.ViabilityCityCQRS.Commands;
 using Application.CQRS.ViabilityRuleCQRS.Commands;
@@ -12,15 +14,17 @@ using Application.DTOs.PlanDTOs;
 using Application.DTOs.ViabilityRuleDTOs;
 using Application.Interfaces;
 using Application.Mappings;
+using Application.Utils.Formatting;
 using Domain.Entities;
 using Domain.Exceptions;
 using MediatR;
 
 namespace Application.Services;
 
-public class PlanServiceImpl(IMediator mediator) : IPlanService
+public class PlanServiceImpl(IMediator mediator, ITextFormattingUtil text) : IPlanService
 {
     private readonly IMediator _mediator = mediator;
+    private readonly ITextFormattingUtil _text = text;
     
     public async Task CreatePlan(CreatePlanDto dto)
     {
@@ -42,15 +46,15 @@ public class PlanServiceImpl(IMediator mediator) : IPlanService
             .ToList();
     }
 
-    public async Task CreatePlanByStateAsync(CreateViabilityRuleByStateDto dto)
+    public async Task<Guid> CreatePlanByStateAsync(CreateViabilityRuleByStateDto dto)
     {
         var internet = await _mediator.Send(new ReturnInternetByInternetSpeedQuery(dto.InternetSpeed));
         if (internet is null)
             internet = await _mediator.Send(new CreateInternetCommand(dto.InternetSpeed, dto.SpeedType));
 
-        var plan = await _mediator.Send(new ReturnPlanByParametersQuery(dto.Plan, dto.Value, internet.Id));
-        if (plan is null)
-            plan = await _mediator.Send(new CreatePlanCommand(internet.Id, dto.Plan, dto.Value));
+        //var plan = await _mediator.Send(new ReturnPlanByParametersQuery(dto.Plan, dto.Value, internet.Id));
+        
+        var plan = await _mediator.Send(new CreatePlanCommand(internet.Id, dto.Plan, dto.Value));
         
         var state = await _mediator.Send(new ReturnStateByUfQuery(dto.State));
 
@@ -59,6 +63,8 @@ public class PlanServiceImpl(IMediator mediator) : IPlanService
             
         var viabilityRule = await _mediator.Send(new CreateViabilityRuleCommand(plan.Id, dto.CompanyId, dto.FeasibilityTypeId));
         await _mediator.Send(new CreateViabilityStateCommand(viabilityRule.Id, state.Id));
+
+        return plan.Id;
     }
     
     public async Task CreatePlanByCityAsync(CreateViabilityRuleByCityDto dto)
@@ -84,7 +90,15 @@ public class PlanServiceImpl(IMediator mediator) : IPlanService
     {
         foreach (var dto in dtos)
         {
-            await CreatePlanByStateAsync(dto);
+            var planId = await CreatePlanByStateAsync(dto);
+            
+            var observations = _text.CaptureText(dto.Obervations);
+            foreach (var d in observations)
+            {
+                var observation = await _mediator.Send(new CreateObservationCommand(d.Observation));
+                await _mediator.Send(new CreatePlanObservationCommand(planId, observation.Id));
+            }
+            
         }
     }
 

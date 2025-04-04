@@ -30,7 +30,7 @@ public static class DependencyInjection
         var muHandlers = AppDomain.CurrentDomain.Load("Application");
         services.AddMediatR(config => config.RegisterServicesFromAssemblies(muHandlers));
         
-        /*__Registering Services__*/
+        /*__Registering Repositories__*/
         services.AddScoped<IStateRepository, StateRepositoryImpl>();
         services.AddScoped<IAddressRepository, AddressRepositoryImpl>();
         services.AddScoped<ICompanyRepository, CompanyRepositoryImpl>();
@@ -45,6 +45,8 @@ public static class DependencyInjection
         services.AddScoped<IViabilityRuleRepository, ViabilityRuleRepositoryImpl>();
         services.AddScoped<IViabilityStateRepository, ViabilityStateRepositoryImpl>();
         services.AddScoped<IViabilityCityRepository, ViabilityCityRepositoryImpl>();
+        services.AddScoped<IObservationRepository, ObservationRepositoryImpl>();
+        services.AddScoped<IPlanObservationRepository, PlanObservationRepositoryImpl>();
         
         /*__Registering Services__*/
         services.AddScoped<IStateService, StateServiceImpl>();
