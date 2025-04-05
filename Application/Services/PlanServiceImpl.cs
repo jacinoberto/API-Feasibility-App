@@ -67,15 +67,16 @@ public class PlanServiceImpl(IMediator mediator, ITextFormattingUtil text) : IPl
         return plan.Id;
     }
     
-    public async Task CreatePlanByCityAsync(CreateViabilityRuleByCityDto dto)
+    public async Task<Guid> CreatePlanByCityAsync(CreateViabilityRuleByCityDto dto)
     {
         var internet = await _mediator.Send(new ReturnInternetByInternetSpeedQuery(dto.InternetSpeed));
         if (internet is null)
             internet = await _mediator.Send(new CreateInternetCommand(dto.InternetSpeed, dto.SpeedType));
 
-        var plan = await _mediator.Send(new ReturnPlanByParametersQuery(dto.Plan, dto.Value, internet.Id));
-        if (plan is null)
-            plan = await _mediator.Send(new CreatePlanCommand(internet.Id, dto.Plan, dto.Value));
+        //var plan = await _mediator.Send(new ReturnPlanByParametersQuery(dto.Plan, dto.Value, internet.Id));
+        //if (plan is null)
+        
+        var plan = await _mediator.Send(new CreatePlanCommand(internet.Id, dto.Plan, dto.Value));
 
         if (await CheckFeasibilityTypeIsState(dto.FeasibilityTypeId))
             throw new InternalErrorException("Sua empresa já tem uma regra estabelecida pra a consulta dos valores dos planos serem realizadas por cidade, inative essa configuração para poder adicionar outra.");
@@ -84,6 +85,7 @@ public class PlanServiceImpl(IMediator mediator, ITextFormattingUtil text) : IPl
         
         var viabilityRule = await _mediator.Send(new CreateViabilityRuleCommand(plan.Id, dto.CompanyId, dto.FeasibilityTypeId));
         await _mediator.Send(new CreateViabilityCityCommand(viabilityRule.Id, address.Id));
+        return plan.Id;
     }
 
     public async Task CreateAllPlanByStateAsync(IEnumerable<CreateViabilityRuleByStateDto> dtos)
@@ -91,14 +93,16 @@ public class PlanServiceImpl(IMediator mediator, ITextFormattingUtil text) : IPl
         foreach (var dto in dtos)
         {
             var planId = await CreatePlanByStateAsync(dto);
-            
             var observations = _text.CaptureText(dto.Obervations);
+            
             foreach (var d in observations)
             {
-                var observation = await _mediator.Send(new CreateObservationCommand(d.Observation));
-                await _mediator.Send(new CreatePlanObservationCommand(planId, observation.Id));
+                if (d.Observation != string.Empty)
+                {
+                    var observation = await _mediator.Send(new CreateObservationCommand(d.Observation));
+                    await _mediator.Send(new CreatePlanObservationCommand(planId, observation.Id));
+                }
             }
-            
         }
     }
 
@@ -106,7 +110,17 @@ public class PlanServiceImpl(IMediator mediator, ITextFormattingUtil text) : IPl
     {
         foreach (var dto in dtos)
         {
-            await CreatePlanByCityAsync(dto);
+            var planId = await CreatePlanByCityAsync(dto);
+            var observations = _text.CaptureText(dto.Observations);
+            
+            foreach (var o in observations)
+            {
+                if (o.Observation != string.Empty)
+                {
+                    var observation = await _mediator.Send(new CreateObservationCommand(o.Observation));
+                    await _mediator.Send(new CreatePlanObservationCommand(planId, observation.Id));
+                }
+            }
         }
     }
   

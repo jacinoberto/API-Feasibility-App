@@ -7,6 +7,7 @@ public record CreateViabilityRuleByCityDto(
     decimal Value,
     string City,
     string State,
+    string Observations,
     Guid CompanyId,
     Guid FeasibilityTypeId
     );

@@ -98,7 +98,7 @@ public class PlanController(IPlanService service, IReadCvsUtil csv, ITextFormatt
         {
             var companyId = (Guid)companyGuid;
             await _service.CreateAllPlanByCityAsync(plans.Select(plan => new CreateViabilityRuleByCityDto(
-                    plan.Plan, plan.InternetSpeed, plan.SpeedType, plan.Value, plan.City, plan.State, companyId, feasibilityTypeId))
+                    plan.Plan, plan.InternetSpeed, plan.SpeedType, plan.Value, plan.City, plan.State, plan.Observations, companyId, feasibilityTypeId))
                 .ToList());
         
             return StatusCode(201);

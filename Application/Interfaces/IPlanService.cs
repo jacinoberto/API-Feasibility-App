@@ -11,7 +11,7 @@ public interface IPlanService
     Task<IEnumerable<ReturnPlanDto>> GetAllPlansAsync();
 
     Task<Guid> CreatePlanByStateAsync(CreateViabilityRuleByStateDto dto);
-    Task CreatePlanByCityAsync(CreateViabilityRuleByCityDto dto);
+    Task<Guid> CreatePlanByCityAsync(CreateViabilityRuleByCityDto dto);
     Task CreateAllPlanByStateAsync(IEnumerable<CreateViabilityRuleByStateDto> dtos);
     Task CreateAllPlanByCityAsync(IEnumerable<CreateViabilityRuleByCityDto> dtos);
     Task DisablePlansAsync(Guid companyId);

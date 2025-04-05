@@ -21,4 +21,7 @@ public class PlanByCityCsv
     
     [Name("Estado/UF")]
     public string State { get; set; }
+    
+    [Name("Observacoes")]
+    public string Observations { get; set; }
 }
