@@ -77,4 +77,26 @@ public class FeasibilityRepositoryImpl(AppDbContext context) : IFeasibilityRepos
         
         return true;
     }
+    
+    public async Task<bool> CheckByAddressAsync(string street, string area, string city, Guid companyId, Guid operatorId)
+    {
+        var feasibility = await _context.Feasibilities
+            .Where(f =>
+                _context.CompanyOperators
+                    .Where(cp => cp.CompanyId == companyId)
+                    .Select(cp => cp.OperatorId)
+                    .Any(id => id == operatorId)
+                
+                && _context.RegionConsultations
+                    .Where(rc => rc.CompanyId == companyId)
+                    .Select(rc => rc.StateId)
+                    .Any(id => id == f.Address.StateId)
+                
+                && f.Address.Street.ToUpper().Contains(street.ToUpper())
+                && f.Address.Area.ToUpper().Contains(area.ToUpper())
+                && f.Address.City.ToUpper().Contains(city.ToUpper()))
+            .FirstOrDefaultAsync() ?? throw new NotFoundException("Não há viabilidade para essa cidade e estado.");
+        
+        return true;
+    }
 }

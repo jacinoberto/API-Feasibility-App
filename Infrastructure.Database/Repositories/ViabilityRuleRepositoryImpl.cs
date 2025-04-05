@@ -89,6 +89,34 @@ public class ViabilityRuleRepositoryImpl(AppDbContext context) : IViabilityRuleR
         return viabilityrules;
     }
     
+    public async Task<ICollection<ViabilityRule>> GetByAddress(string street, string area, string city, Guid companyId)
+    {
+        var viabilityrules = await _context.ViabilityRules
+            .Include(vr => vr.Plan)
+            .Include(vr => vr.Plan.Internet)
+            .Include(vr => vr.FeasibilityType)
+            .Where(vr => vr.FeasibilityType.Type == "Estado"
+                         && vr.CompanyId == companyId
+                         && vr.ViabilityStates.Any(vs => vs.State.Addresses.Any(a =>
+                             a.Street.ToUpper().Contains(street.ToUpper()) &&
+                             a.Area.ToUpper().Contains(area.ToUpper()) &&
+                             a.City.ToUpper().Contains(city.ToUpper())))
+                         && vr.IsActive == true
+                         
+                         || vr.FeasibilityType.Type == "Cidade"
+                         && vr.CompanyId == companyId
+                         && vr.ViabilityCities.Any(vc =>
+                             vc.Address.Street.ToUpper().Contains(street.ToUpper()) &&
+                                vc.Address.Area.ToUpper().Contains(area.ToUpper()) &&
+                             vc.Address.City.ToUpper().Contains(city.ToUpper()))
+                         && vr.IsActive == true)
+            .ToListAsync();
+
+        if (viabilityrules.Count == 0) throw new NotFoundException("Sua empresa não possuí planos registrados no sistema para essa região.");
+
+        return viabilityrules;
+    }
+    
     public async Task DisableAsync(Guid companyId)
     {
         var viabilityRules = await _context.ViabilityRules.Where(vr =>

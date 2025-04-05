@@ -110,4 +110,30 @@ public class FeasibilityController(IFeasibilityService service, IReadCvsUtil csv
 
         return Unauthorized("Token invalido.");
     }
+    
+    /// <summary>
+    /// Consultar viabilidade através do endereço, informando a qual operadora pertence.
+    /// </summary>
+    /// <param name="street"></param>
+    /// <param name="area"></param>
+    /// <param name="city"></param>
+    /// <param name="operatorId"></param>
+    /// <returns>IActionResulr</returns>
+    /// <response code="200">Se a consulta for realizada com sucesso.</response>
+    /// <response code="404">Se não for encontrado nenhum resultado com os parâmetros fornecidos."</response>
+    /// <response code="401">Se o usuário não for autenticado"</response>
+    [HttpGet("by-address")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetByAddress([FromQuery] string street, [FromQuery] string area, [FromQuery] string city, [FromQuery] Guid operatorId)
+    {
+        if (HttpContext.Items.TryGetValue("CompanyId", out var companyGuid))
+        {
+            var companyId = (Guid)companyGuid;
+            return Ok(await _service.GetByAddressAsync(street, area, city, companyId, operatorId));
+        }
+
+        return Unauthorized("Token invalido.");
+    }
 }

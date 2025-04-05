@@ -117,4 +117,27 @@ public class FeasibilityServiceImpl(IMediator mediator) : IFeasibilityService
 
         throw new NotFoundException("Não há viabilidade");
     }
+    
+    public async Task<IEnumerable<ReturnFeasibilityDto>> GetByAddressAsync(string street, string area, string city, Guid companyId, Guid operatorId)
+    {
+        if (await _mediator.Send(new ReturnFeasibilityByAddressQuery(street, area, city, companyId, operatorId)))
+        {
+            var viabilityRules = await _mediator.Send(new ReturnViabilityRuleByAddressQuery(street, area, city, companyId));
+            
+            ICollection<ReturnFeasibilityDto> dtos = [];
+            foreach (var vr in viabilityRules)
+            {
+                var observations = await _mediator.Send(new ReturnPlanObservationByPlanIdQuery(vr.PlanId));
+                var observationDto = observations.Select(
+                    o => new ReturnObservationDto(o.Id, o.Observation.PlanObservation)).ToList();
+
+                dtos.Add(new ReturnFeasibilityDto(vr.Id, vr.Plan.PlanName, vr.Plan.Internet.InternetSpeed + " " + vr.Plan.Internet.SpeedType,
+                    vr.Plan.Value, observationDto));
+            }
+
+            return dtos;
+        }
+
+        throw new NotFoundException("Não há viabilidade");
+    }
 }
